@@ -12,6 +12,7 @@ function conversation() {
 
 // On Created
 Template.body.onCreated(function() {
+  Session.set("IsUser", true);
   const getId = Conversations.insert({
     withBot: true
   });
@@ -53,7 +54,7 @@ Template.body.events({
     Messages.insert({
       conversationId: Session.get("ConversationId"),
       content: text,
-      fromUser: true,
+      fromUser: Session.get("IsUser"),
       timeSent: new Date()
     });
 
@@ -96,6 +97,7 @@ Template.body.events({
     }
 
     // Switch to conversation
+    Session.set("IsUser", false);
     Session.set("ConversationId", text);
     Conversations.update(text, {
       $set: {
