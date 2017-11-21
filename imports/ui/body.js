@@ -63,7 +63,7 @@ Template.body.events({
         question: text
       });
 
-      let answerText = "Sorry, dat begreep ik niet, probber iets anders te vragen.";
+      let answerText = "Sorry, dat begreep ik niet, probeer iets anders te vragen.";
       if (typeof answerObject !== "undefined") {
         answerText = answerObject.answer;
       }
