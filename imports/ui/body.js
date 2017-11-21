@@ -2,18 +2,20 @@ import './body.html';
 import { Messages } from "../api/messages";
 import { Conversations } from "../api/conversations";
 
-// Create new conversation
-const getId = Conversations.insert({
-  withBot: true
-});
-Session.set("ConversationId", getId);
-
-// Conversation function
+// Functions
 function conversation() {
   return Conversations.findOne({
     _id: Session.get("ConversationId")
   });
 }
+
+// On Created
+Template.body.onCreated(function() {
+  const getId = Conversations.insert({
+    withBot: true
+  });
+  Session.set("ConversationId", getId);
+});
 
 // Helpers
 Template.body.helpers({
