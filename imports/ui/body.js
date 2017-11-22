@@ -19,6 +19,11 @@ Template.body.onCreated(function() {
   Session.set("ConversationId", getId);
 });
 
+// On Rendered
+Template.body.onRendered(function() {
+  document.getElementById("message-input").focus();
+});
+
 // Helpers
 Template.body.helpers({
   messages() {
@@ -78,7 +83,8 @@ Template.body.events({
     }
 
     // Clear form
-    target.text.value = '';
+    target.text.value = "";
+    target.text.focus();
   },
   'submit #form-switch-conversation'(event) {
     // Prevent default browser form submit
@@ -106,6 +112,8 @@ Template.body.events({
     });
 
     // Clear form
-    target.text.value = '';
+    target.text.value = "";
+    document.getElementById("message-input").value = "";
+    document.getElementById("message-input").focus();
   }
 });
