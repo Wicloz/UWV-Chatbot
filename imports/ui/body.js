@@ -18,13 +18,13 @@ function updateConversation(data) {
 function botSendAfterDelay(message) {
   updateConversation({botTalking: true});
   Meteor.setTimeout(() => {
+    updateConversation({botTalking: false});
     Messages.insert({
       conversationId: Session.get("ConversationId"),
       content: message,
       fromUser: false,
       timeSent: new Date()
     });
-    updateConversation({botTalking: false});
   }, 800);
 }
 
@@ -76,6 +76,13 @@ Template.body.events({
       return;
     }
 
+    // Remove talking flag
+    if (Session.get("IsUser")) {
+      updateConversation({humanTalking: false});
+    } else {
+      updateConversation({botTalking: false});
+    }
+
     // Send user message
     Messages.insert({
       conversationId: Session.get("ConversationId"),
@@ -90,11 +97,6 @@ Template.body.events({
     }
 
     // Clear form
-    if (Session.get("IsUser")) {
-      updateConversation({humanTalking: false});
-    } else {
-      updateConversation({botTalking: false});
-    }
     target.text.value = "";
     target.text.focus();
   },
