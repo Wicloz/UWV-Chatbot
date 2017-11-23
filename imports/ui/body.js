@@ -117,14 +117,16 @@ Template.body.events({
     }
 
     // Clean up this conversation
-    updateConversation({humanTalking: false});
+    if (Session.get("IsUser")) {
+      updateConversation({humanTalking: false});
+    } else {
+      updateConversation({botTalking: false});
+    }
 
     // Switch to conversation
     Session.set("IsUser", false);
     Session.set("ConversationId", text);
-    updateConversation({
-      withBot: false
-    });
+    updateConversation({withBot: false});
 
     // Clear form
     target.text.value = "";
