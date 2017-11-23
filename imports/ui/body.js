@@ -9,6 +9,12 @@ function conversation() {
   });
 }
 
+function updateConversation(data) {
+  Conversations.update(Session.get("ConversationId"), {
+    $set: data
+  });
+}
+
 // On Created
 Template.body.onCreated(function() {
   Session.set("IsUser", true);
@@ -104,10 +110,8 @@ Template.body.events({
     // Switch to conversation
     Session.set("IsUser", false);
     Session.set("ConversationId", text);
-    Conversations.update(text, {
-      $set: {
-        withBot: false
-      }
+    updateConversation({
+      withBot: false
     });
 
     // Clear form
