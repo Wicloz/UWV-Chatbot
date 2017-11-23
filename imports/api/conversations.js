@@ -9,6 +9,12 @@ const Schemas = {};
 Schemas.Conversation = new SimpleSchema({
   withBot: {
     type: Boolean
+  },
+  botTalking: {
+    type: Boolean
+  },
+  humanTalking: {
+    type: Boolean
   }
 }, { tracker: Tracker });
 

@@ -15,11 +15,26 @@ function updateConversation(data) {
   });
 }
 
+function botSendAfterDelay(message) {
+  updateConversation({botTalking: true});
+  Meteor.setTimeout(() => {
+    Messages.insert({
+      conversationId: Session.get("ConversationId"),
+      content: message,
+      fromUser: false,
+      timeSent: new Date()
+    });
+    updateConversation({botTalking: false});
+  }, 800);
+}
+
 // On Created
 Template.body.onCreated(function() {
   Session.set("IsUser", true);
   const getId = Conversations.insert({
-    withBot: true
+    withBot: true,
+    botTalking: true,
+    humanTalking: false,
   });
   Session.set("ConversationId", getId);
 });
@@ -27,6 +42,7 @@ Template.body.onCreated(function() {
 // On Rendered
 Template.body.onRendered(function() {
   document.getElementById("message-input").focus();
+  botSendAfterDelay("Hoe kan ik U helpen.");
 });
 
 // Helpers
@@ -70,24 +86,15 @@ Template.body.events({
 
     // Send bot message
     if (conversation().withBot) {
-      const answerObject = Answers.findOne({
-        question: text
-      });
-
-      let answerText = "Sorry, dat begreep ik niet, probeer iets anders te vragen.";
-      if (typeof answerObject !== "undefined") {
-        answerText = answerObject.answer;
-      }
-
-      Messages.insert({
-        conversationId: Session.get("ConversationId"),
-        content: answerText,
-        fromUser: false,
-        timeSent: new Date()
-      });
+      botSendAfterDelay("Sorry, dat begreep ik niet, probeer iets anders te vragen.");
     }
 
     // Clear form
+    if (Session.get("IsUser")) {
+      updateConversation({humanTalking: false});
+    } else {
+      updateConversation({botTalking: false});
+    }
     target.text.value = "";
     target.text.focus();
   },
@@ -107,6 +114,9 @@ Template.body.events({
       return;
     }
 
+    // Clean up this conversation
+    updateConversation({humanTalking: false});
+
     // Switch to conversation
     Session.set("IsUser", false);
     Session.set("ConversationId", text);
@@ -118,5 +128,12 @@ Template.body.events({
     target.text.value = "";
     document.getElementById("message-input").value = "";
     document.getElementById("message-input").focus();
+  },
+  'keydown #message-input'(event) {
+    if (Session.get("IsUser")) {
+      updateConversation({humanTalking: true});
+    } else {
+      updateConversation({botTalking: true});
+    }
   }
 });

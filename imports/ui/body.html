@@ -11,6 +11,20 @@
               </blockquote>
             </li>
           {{/each}}
+          {{#if conversation.botTalking}}
+            <li>
+              <blockquote class="blockquote text-right">
+                <p>ooo</p>
+              </blockquote>
+            </li>
+          {{/if}}
+          {{#if conversation.humanTalking}}
+            <li>
+              <blockquote class="blockquote">
+                <p>ooo</p>
+              </blockquote>
+            </li>
+          {{/if}}
         </ul>
 
         <form id="form-send-message">
