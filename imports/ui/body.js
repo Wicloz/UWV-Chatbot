@@ -1,7 +1,6 @@
 import './body.html';
 import { Messages } from "../api/messages";
 import { Conversations } from "../api/conversations";
-import { Answers } from "../api/answers";
 
 // Functions
 function conversation() {
