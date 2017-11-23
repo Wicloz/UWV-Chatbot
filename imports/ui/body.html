@@ -7,7 +7,11 @@
           {{#each message in messages}}
             <li>
               <blockquote class="blockquote {{#unless message.fromUser}}text-right{{/unless}}">
-                <p>{{message.content}}</p>
+                {{#if message.isText}}
+                  <p>{{message.content}}</p>
+                {{else if message.isVideo}}
+                  <video src="{{message.content}}" controls autoplay></video>
+                {{/if}}
               </blockquote>
             </li>
           {{/each}}

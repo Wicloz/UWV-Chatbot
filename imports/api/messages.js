@@ -13,6 +13,10 @@ Schemas.Message = new SimpleSchema({
   content: {
     type: String
   },
+  contentType: {
+    type: String,
+    allowedValues: ["text", "video"]
+  },
   fromUser: {
     type: Boolean
   },
@@ -25,5 +29,10 @@ Messages.attachSchema(Schemas.Message);
 
 // Helpers
 Messages.helpers({
-
+  isText: function () {
+    return this.contentType === "text";
+  },
+  isVideo: function () {
+    return this.contentType === "video";
+  }
 });

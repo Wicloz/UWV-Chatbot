@@ -15,13 +15,14 @@ function updateConversation(data) {
   });
 }
 
-function botSendAfterDelay(message) {
+function botSendAfterDelay(message, type="text") {
   updateConversation({botTalking: true});
   Meteor.setTimeout(() => {
     updateConversation({botTalking: false});
     Messages.insert({
       conversationId: Session.get("ConversationId"),
       content: message,
+      contentType: type,
       fromUser: false,
       timeSent: new Date()
     });
@@ -58,7 +59,7 @@ Template.body.onCreated(function() {
 // On Rendered
 Template.body.onRendered(function() {
   document.getElementById("message-input").focus();
-  botSendAfterDelay("Hoe kan ik U helpen.");
+  botSendAfterDelay("Hoe kan ik U helpen?");
 });
 
 // Helpers
@@ -99,6 +100,7 @@ Template.body.events({
     Messages.insert({
       conversationId: Session.get("ConversationId"),
       content: text,
+      contentType: "text",
       fromUser: Session.get("IsUser"),
       timeSent: new Date()
     });
