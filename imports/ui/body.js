@@ -28,6 +28,22 @@ function botSendAfterDelay(message) {
   }, 800);
 }
 
+function startTalking() {
+  if (Session.get("IsUser")) {
+    updateConversation({humanTalking: true});
+  } else {
+    updateConversation({botTalking: true});
+  }
+}
+
+function stopTalking() {
+  if (Session.get("IsUser")) {
+    updateConversation({humanTalking: false});
+  } else {
+    updateConversation({botTalking: false});
+  }
+}
+
 // On Created
 Template.body.onCreated(function() {
   Session.set("IsUser", true);
@@ -77,11 +93,7 @@ Template.body.events({
     }
 
     // Remove talking flag
-    if (Session.get("IsUser")) {
-      updateConversation({humanTalking: false});
-    } else {
-      updateConversation({botTalking: false});
-    }
+    stopTalking();
 
     // Send user message
     Messages.insert({
@@ -117,11 +129,7 @@ Template.body.events({
     }
 
     // Clean up this conversation
-    if (Session.get("IsUser")) {
-      updateConversation({humanTalking: false});
-    } else {
-      updateConversation({botTalking: false});
-    }
+    stopTalking();
 
     // Switch to conversation
     Session.set("IsUser", false);
@@ -134,10 +142,6 @@ Template.body.events({
     document.getElementById("message-input").focus();
   },
   'keydown #message-input'(event) {
-    if (Session.get("IsUser")) {
-      updateConversation({humanTalking: true});
-    } else {
-      updateConversation({botTalking: true});
-    }
+    startTalking();
   }
 });
