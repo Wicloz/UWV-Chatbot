@@ -15,9 +15,13 @@ Schemas.Message = new SimpleSchema({
   },
   contentType: {
     type: String,
-    allowedValues: ["text", "video"]
+    allowedValues: ["text", "video", "iframe"]
   },
-  fromUser: {
+  contentBotMeta: {
+    type: String,
+    required: false
+  },
+    fromUser: {
     type: Boolean
   },
   timeSent: {
@@ -34,5 +38,8 @@ Messages.helpers({
   },
   isVideo: function () {
     return this.contentType === "video";
+  },
+  isIframe: function () {
+    return this.contentType === "iframe";
   }
 });

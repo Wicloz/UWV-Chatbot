@@ -7,6 +7,8 @@
   "dependencies": {
     "babel-runtime": "^6.26.0",
     "meteor-node-stubs": "^0.3.2",
+    "natural": "^0.5.4",
+    "sentence-similarity": "^1.0.7",
     "simpl-schema": "^1.1.0"
   }
 }

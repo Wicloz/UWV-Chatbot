@@ -8,9 +8,11 @@
             <li>
               <blockquote class="blockquote {{#unless message.fromUser}}text-right{{/unless}}">
                 {{#if message.isText}}
-                  <p>{{message.content}}</p>
+                  <p>{{{message.content}}}</p>
                 {{else if message.isVideo}}
-                  <video src="{{message.content}}" controls autoplay></video>
+                  <video src="{{message.content}}" controls></video>
+                {{else if message.isIframe}}
+                  <iframe src="{{message.content}}"></iframe>
                 {{/if}}
               </blockquote>
             </li>
@@ -22,7 +24,7 @@
               </blockquote>
             </li>
           {{/if}}
-          {{#if conversation.humanTalking}}
+          {{#if conversation.userTalking}}
             <li>
               <blockquote class="blockquote">
                 <p>ooo</p>

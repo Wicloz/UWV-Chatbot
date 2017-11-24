@@ -9,49 +9,13 @@ function conversation() {
   });
 }
 
-function updateConversation(data) {
-  Conversations.update(Session.get("ConversationId"), {
-    $set: data
-  });
-}
-
-function botSendAfterDelay(message, type="text") {
-  updateConversation({botTalking: true});
-  Meteor.setTimeout(() => {
-    updateConversation({botTalking: false});
-    Messages.insert({
-      conversationId: Session.get("ConversationId"),
-      content: message,
-      contentType: type,
-      fromUser: false,
-      timeSent: new Date()
-    });
-  }, 800);
-}
-
-function startTalking() {
-  if (Session.get("IsUser")) {
-    updateConversation({humanTalking: true});
-  } else {
-    updateConversation({botTalking: true});
-  }
-}
-
-function stopTalking() {
-  if (Session.get("IsUser")) {
-    updateConversation({humanTalking: false});
-  } else {
-    updateConversation({botTalking: false});
-  }
-}
-
 // On Created
 Template.body.onCreated(function() {
   Session.set("IsUser", true);
   const getId = Conversations.insert({
     withBot: true,
     botTalking: true,
-    humanTalking: false,
+    userTalking: false,
   });
   Session.set("ConversationId", getId);
 });
@@ -59,7 +23,9 @@ Template.body.onCreated(function() {
 // On Rendered
 Template.body.onRendered(function() {
   document.getElementById("message-input").focus();
-  botSendAfterDelay("Hoe kan ik U helpen?");
+  Meteor.setTimeout(() => {
+    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), "Hoe kan ik U helpen?", "text", false);
+  }, 1000);
 });
 
 // Helpers
@@ -94,20 +60,14 @@ Template.body.events({
     }
 
     // Remove talking flag
-    stopTalking();
+    Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"), false);
 
     // Send user message
-    Messages.insert({
-      conversationId: Session.get("ConversationId"),
-      content: text,
-      contentType: "text",
-      fromUser: Session.get("IsUser"),
-      timeSent: new Date()
-    });
+    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), text, "text", Session.get("IsUser"));
 
-    // Send bot message
+    // Handle bot message
     if (conversation().withBot) {
-      botSendAfterDelay("Sorry, dat begreep ik niet, probeer iets anders te vragen.");
+      Meteor.call("conversations.botResponse", Session.get("ConversationId"), text);
     }
 
     // Clear form
@@ -131,12 +91,13 @@ Template.body.events({
     }
 
     // Clean up this conversation
-    stopTalking();
+    Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"), false);
+    Meteor.call("conversations.updateBotState", Session.get("ConversationId"), true);
 
     // Switch to conversation
     Session.set("IsUser", false);
     Session.set("ConversationId", text);
-    updateConversation({withBot: false});
+    Meteor.call("conversations.updateBotState", Session.get("ConversationId"), false);
 
     // Clear form
     target.text.value = "";
@@ -144,6 +105,6 @@ Template.body.events({
     document.getElementById("message-input").focus();
   },
   'keydown #message-input'(event) {
-    startTalking();
+    Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"), true);
   }
 });

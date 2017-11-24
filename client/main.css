@@ -5,3 +5,10 @@ img {
 video {
   max-width: 100%;
 }
+
+iframe {
+  width: 100%;
+  border: none;
+  height: 436px;
+  overflow: hidden;
+}
