@@ -82,10 +82,13 @@ Meteor.methods({
     // Define and rank possible questions
     let possibilities = [
       ["voorwaarden", sentenceSimilarity(userMessage, "Welke voorwaarden zijn er om een ww-uitkering te krijgen?")],
-      ["voorwaarden", sentenceSimilarity(userMessage, "Wanneer kan ik een ww-uitkering krijgen?")],
       ["weerwerken", sentenceSimilarity(userMessage, "Ik ga weer werken. Hoe wordt dit verrekend met mijn ww-uitkering?")],
       ["overmaken", sentenceSimilarity(userMessage, "Wanneer wordt mijn ww-uitkering overgemaakt?")],
-      ["dagloon", sentenceSimilarity(userMessage, "Hoe wordt de hoogte van mijn dagloon berekend?")]
+      ["dagloon", sentenceSimilarity(userMessage, "Hoe wordt de hoogte van mijn dagloon berekend?")],
+      ["wanneer", sentenceSimilarity(userMessage, "Wanneer kan ik een ww-uitkering aanvragen?")],
+      ["hoelang", sentenceSimilarity(userMessage, "Hoelang heb ik recht op een ww-uitkering?")],
+      ["aanvragen", sentenceSimilarity(userMessage, "Hoe kan ik een ww-uitkering aanvragen?")],
+      ["eerstebetaling", sentenceSimilarity(userMessage, "Wanneer krijg ik de eerste betaling van mijn ww-uitkering?")]
     ];
 
     // Sort possibilities
@@ -96,19 +99,21 @@ Meteor.methods({
     console.log(possibilities);
 
     // Set responses for the best possibility
-    if (possibilities[0][1] > 0.1) {
+    if (possibilities[0][1] > 0.2) {
       meta = possibilities[0][0];
       switch (meta) {
 
         case "voorwaarden":
           responses.push({
-            message: "Als u werkloos wordt en <ul dir=\"rtl\">" +
+            message: "Als u werkloos wordt en" +
+                     "<ul dir=\"rtl\">" +
                      "<li>Verzekerd voor werkloosheid</li>" +
                      "<li>Verlies van minimaal 5 uren per week</li>" +
                      "<li>Direct beschikbaar voor betaald werk</li>" +
                      "<li>In laatste 36 weken voordat u werkloos werd minstens 26 weken gewerkt</li>" +
                      "<li>Geen schuld aan werkloosheid</li>" +
-                    "</ul> dan kunt u een WW-uitkering aanvragen bij UWV.",
+                     "</ul>" +
+                     "dan kunt u een WW-uitkering aanvragen bij UWV.",
             type: "text"
           });
           responses.push({
@@ -198,6 +203,87 @@ Meteor.methods({
           });
           break;
 
+        case "wanneer":
+          responses.push({
+            message: "U kunt dat vanaf 1 week voordat u werkloos wordt en een tot uiterlijk 1 week na uw laatste werkdag doen. Doet u dit later? Dan krijgt u tijdelijk een lagere uitkering.",
+            type: "text"
+          });
+          break;
+
+        case "hoelang":
+          responses.push({
+            message: "Heeft u 10 jaar of minder dan 10 jaar arbeidsverleden?",
+            type: "text"
+          });
+          responses.push({
+            message: "Voor ieder volledig kalenderjaar heeft u recht op 1 maand WW. 7 jaar arbeidsverleden betekent dus 7 maanden WW.",
+            type: "text"
+          });
+          responses.push({
+            message: "Heeft u meer dan 10 jaar arbeidsverleden?",
+            type: "text"
+          });
+          responses.push({
+            message: "Voor alle volledige kalenderjaren aan arbeidsverleden voor 1 januari 2016 heeft u recht op 1 maand WW. Voor alle volledige kalenderjaren aan arbeidsverleden vanaf 1 januari 2016 heeft u recht op 0,5 maand WW.",
+            type: "text"
+          });
+          responses.push({
+            message: "Uw totale arbeidsverleden vindt u op Mijn UWV onder <a href=\"https://werknemer-portaal.uvw.nl/mijnuwv/PersoonlijkeGegevens\">Mijn persoonlijke gegevens<\a>. U kunt de duur ook zelf berekenen.",
+            type: "text"
+          });
+          break;
+
+        case "aanvragen":
+          responses.push({
+            message: "U kunt uw WW-uitkering online aanvragen.",
+            type: "text"
+          });
+          responses.push({
+            message: "U heeft hier een DigiD voor nodig.",
+            type: "text"
+          });
+          responses.push({
+            message: "Daarnaast heeft u nog een aantal gegevens nodig als u een WW-uitkering aanvraagt. Veel van uw gegevens zijn bij ons al bekend. De rest vult u zelf in.",
+            type: "text"
+          });
+          responses.push({
+            message: "Houd in ieder geval de volgende stukken bij de hand:" +
+                     "<ul dir=\"rtl\">" +
+                     "<li>uw laatste loonstrook</li>" +
+                     "<li>uw laatste arbeidscontract</li>" +
+                     "<li>uw rekeningnummer</li>" +
+                     "</ul>",
+            type: "text"
+          });
+          responses.push({
+            message: "<a href=\"https://www.uwv.nl/particulieren/direct-doen/aanvragen-ww-uitkering.aspx\">Klik hier om naar het ww-aanvraag formulier te gaan.<a>",
+            type: "text"
+          });
+          break;
+
+        case "eerstebetaling":
+          responses.push({
+            message: "Als u recht heeft op een WW-uitkering moet u na afloop van elke maand uw formulier Inkomstenopgave invullen en versturen via Mijn UWV. Hierop geeft u aan of u wel of geen inkomsten heeft gehad.",
+            type: "text"
+          });
+          responses.push({
+            message: "Wij betalen de uitkering binnen 10 kalenderdagen nadat wij het formulier hebben ontvangen. Daarna duurt het meestal nog 3 dagen voordat het bedrag op uw rekening staat.",
+            type: "text"
+          });
+          responses.push({
+            message: "Houd er rekening mee dat de eerste betaling van uw uitkering langer kan duren. Op Mijn UWV ziet u precies wanneer wij uw uitkering hebben betaald.",
+            type: "text"
+          });
+          responses.push({
+            message: "Wilt u nog meer weten over Inkomstenopgave hebben we hier een tutorial video voor u gemaakt.",
+            type: "text"
+          });
+          responses.push({
+            message: "https://uwvvod.download.kpnstreaming.nl/uwvvideo/inkomsten-opgeven-eerste-keer/MP4/inkomsten-opgeven-eerste-keer.mp4",
+            type: "video"
+          });
+          break;
+
       }
       responses.push({
         message: "Heeft U verder nog vragen?",
@@ -241,5 +327,5 @@ function sentenceSimilarity(a, b) {
   console.log([a, b]);
   console.log(similarity);
 
-  return similarity.score * similarity.order * similarity.size;
+  return similarity.score * similarity.exact * similarity.order * similarity.size;
 }
