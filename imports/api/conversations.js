@@ -109,7 +109,7 @@ Meteor.methods({
         case "voorwaarden":
           responses.push({
             message: "Als u werkloos wordt en" +
-                     "<ul dir=\"rtl\">" +
+                     "<ul>" +
                      "<li>Verzekerd voor werkloosheid</li>" +
                      "<li>Verlies van minimaal 5 uren per week</li>" +
                      "<li>Direct beschikbaar voor betaald werk</li>" +
@@ -251,7 +251,7 @@ Meteor.methods({
           });
           responses.push({
             message: "Houd in ieder geval de volgende stukken bij de hand:" +
-                     "<ul dir=\"rtl\">" +
+                     "<ul>" +
                      "<li>uw laatste loonstrook</li>" +
                      "<li>uw laatste arbeidscontract</li>" +
                      "<li>uw rekeningnummer</li>" +

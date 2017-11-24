@@ -6,7 +6,7 @@
         <ul class="list-unstyled">
           {{#each message in messages}}
             <li>
-              <blockquote class="blockquote {{#unless message.fromUser}}text-right{{/unless}}">
+              <blockquote class="blockquote {{#if message.fromUser}}text-right{{/if}}">
                 {{#if message.isText}}
                   <p>{{{message.content}}}</p>
                 {{else if message.isVideo}}
@@ -19,14 +19,14 @@
           {{/each}}
           {{#if conversation.botTalking}}
             <li>
-              <blockquote class="blockquote text-right">
+              <blockquote class="blockquote">
                 <p>ooo</p>
               </blockquote>
             </li>
           {{/if}}
           {{#if conversation.userTalking}}
             <li>
-              <blockquote class="blockquote">
+              <blockquote class="blockquote text-right">
                 <p>ooo</p>
               </blockquote>
             </li>

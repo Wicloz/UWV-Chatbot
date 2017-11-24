@@ -23,8 +23,22 @@ Template.body.onCreated(function() {
 // On Rendered
 Template.body.onRendered(function() {
   document.getElementById("message-input").focus();
+
+  let timeName = "";
+  const hours = new Date().getHours();
+
+  if (hours >= 19 && hours < 23) {
+    timeName = "Goedeavond";
+  } else if (hours >= 23 || hours < 7) {
+    timeName = "Goedenacht";
+  } else if (hours >= 7 && hours < 12) {
+    timeName = "Goedemorgen";
+  } else if (hours >= 12 && hours < 19) {
+    timeName = "Goedemiddag";
+  }
+
   Meteor.setTimeout(() => {
-    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), "Hoe kan ik U helpen?", "text", false);
+    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), timeName + ", hoe kan ik U helpen?", "text", false);
   }, 1000);
 });
 
