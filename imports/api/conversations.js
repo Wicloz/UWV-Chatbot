@@ -82,6 +82,7 @@ Meteor.methods({
     // Define and rank possible questions
     let possibilities = [
       ["voorwaarden", sentenceSimilarity(userMessage, "Welke voorwaarden zijn er om een ww-uitkering te krijgen?")],
+      ["voorwaarden", sentenceSimilarity(userMessage, "Mag ik een ww-uitkering krijgen?")],
       ["weerwerken", sentenceSimilarity(userMessage, "Ik ga weer werken. Hoe wordt dit verrekend met mijn ww-uitkering?")],
       ["overmaken", sentenceSimilarity(userMessage, "Wanneer wordt mijn ww-uitkering overgemaakt?")],
       ["dagloon", sentenceSimilarity(userMessage, "Hoe wordt de hoogte van mijn dagloon berekend?")],

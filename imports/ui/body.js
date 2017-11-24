@@ -54,8 +54,8 @@ Template.body.events({
     const target = event.target;
     const text = target.text.value;
 
-    // Stop on empty value
-    if (text === "") {
+    // Stop on empty value or talking bot
+    if (text === "" || conversation().botTalking) {
       return;
     }
 
@@ -106,7 +106,7 @@ Template.body.events({
   },
   'keydown #message-input'(event) {
     Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"),
-      !(event.target.value.length <= 1 && event.keyCode === 8)
+      !(event.target.value.length <= 1 && event.keyCode === 8) && event.target.value.length > 1
     );
   }
 });
