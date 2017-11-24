@@ -312,7 +312,7 @@ Meteor.methods({
         if (i !== responses.length - 1) {
           Meteor.call("conversations.updateTalkingState", conversationId, false, true);
         }
-      }, 2000 * (i + 1));
+      }, 1400 * (i + 1));
     }
   }
 });
