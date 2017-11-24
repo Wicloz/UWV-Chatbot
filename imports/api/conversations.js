@@ -89,6 +89,7 @@ Meteor.methods({
       ["wanneer", sentenceSimilarity(userMessage, "Wanneer kan ik een ww-uitkering aanvragen?")],
       ["hoelang", sentenceSimilarity(userMessage, "Hoelang heb ik recht op een ww-uitkering?")],
       ["aanvragen", sentenceSimilarity(userMessage, "Hoe kan ik een ww-uitkering aanvragen?")],
+      ["aanvragen", sentenceSimilarity(userMessage, "Wat moet ik doen om een ww-uitkering te krijgen?")],
       ["eerstebetaling", sentenceSimilarity(userMessage, "Wanneer krijg ik de eerste betaling van mijn ww-uitkering?")]
     ];
 
@@ -311,7 +312,7 @@ Meteor.methods({
         if (i !== responses.length - 1) {
           Meteor.call("conversations.updateTalkingState", conversationId, false, true);
         }
-      }, 1000 * (i + 1));
+      }, 2000 * (i + 1));
     }
   }
 });

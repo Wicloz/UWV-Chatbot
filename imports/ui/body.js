@@ -105,6 +105,8 @@ Template.body.events({
     document.getElementById("message-input").focus();
   },
   'keydown #message-input'(event) {
-    Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"), true);
+    Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"),
+      !(event.target.value.length <= 1 && event.keyCode === 8)
+    );
   }
 });
