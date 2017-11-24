@@ -85,6 +85,7 @@ Meteor.methods({
       ["weerwerken", sentenceSimilarity(userMessage, "Ik ga weer werken. Hoe wordt dit verrekend met mijn ww-uitkering?")],
       ["overmaken", sentenceSimilarity(userMessage, "Wanneer wordt mijn ww-uitkering overgemaakt?")],
       ["dagloon", sentenceSimilarity(userMessage, "Hoe wordt de hoogte van mijn dagloon berekend?")],
+      ["dagloon", sentenceSimilarity(userMessage, "Hoeveel uitkering kan ik verwachten te krijgen?")],
       ["wanneer", sentenceSimilarity(userMessage, "Wanneer kan ik een ww-uitkering aanvragen?")],
       ["hoelang", sentenceSimilarity(userMessage, "Hoelang heb ik recht op een ww-uitkering?")],
       ["aanvragen", sentenceSimilarity(userMessage, "Hoe kan ik een ww-uitkering aanvragen?")],
@@ -228,7 +229,7 @@ Meteor.methods({
             type: "text"
           });
           responses.push({
-            message: "Uw totale arbeidsverleden vindt u op Mijn UWV onder <a href=\"https://werknemer-portaal.uvw.nl/mijnuwv/PersoonlijkeGegevens\">Mijn persoonlijke gegevens<\a>. U kunt de duur ook zelf berekenen.",
+            message: "Uw totale arbeidsverleden vindt u op Mijn UWV onder <a href=\"https://werknemer-portaal.uwv.nl/mijnuwv/PersoonlijkeGegevens\">Mijn persoonlijke gegevens<\a>. U kunt de duur ook zelf berekenen.",
             type: "text"
           });
           break;
