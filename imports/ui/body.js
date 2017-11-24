@@ -120,7 +120,7 @@ Template.body.events({
   },
   'keydown #message-input'(event) {
     Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"),
-      !(event.target.value.length <= 1 && event.keyCode === 8) && event.target.value.length > 1
+      !(event.target.value.length <= 1 && event.keyCode === 8) && event.keyCode !== 13
     );
   }
 });

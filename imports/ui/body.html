@@ -3,33 +3,36 @@
     <div class="row">
       <div class="col-md">
 
-        <ul class="list-unstyled">
+        <ul class="list-unstyled message-area">
           {{#each message in messages}}
             <li>
-              <blockquote class="blockquote {{#if message.fromUser}}text-right{{/if}}">
+              <blockquote class="blockquote message {{#if message.fromUser}}message-user{{else}}message-bot{{/if}}">
                 {{#if message.isText}}
-                  <p>{{{message.content}}}</p>
+                  <span>{{{message.content}}}</span>
                 {{else if message.isVideo}}
                   <video src="{{message.content}}" controls></video>
                 {{else if message.isIframe}}
-                  <iframe src="{{message.content}}"></iframe>
+                  <iframe class="inline-iframe" src="{{message.content}}"></iframe>
                 {{/if}}
               </blockquote>
             </li>
+            <div style="clear: both;"></div>
           {{/each}}
           {{#if conversation.botTalking}}
             <li>
-              <blockquote class="blockquote">
-                <p>ooo</p>
+              <blockquote class="blockquote message message-talking message-bot">
+                <span class="talking"><span>•</span><span>•</span><span>•</span></span>
               </blockquote>
             </li>
+            <div style="clear: both;"></div>
           {{/if}}
           {{#if conversation.userTalking}}
             <li>
-              <blockquote class="blockquote text-right">
-                <p>ooo</p>
+              <blockquote class="blockquote message message-talking message-user">
+                <span class="talking"><span>•</span><span>•</span><span>•</span></span>
               </blockquote>
             </li>
+            <div style="clear: both;"></div>
           {{/if}}
         </ul>
 

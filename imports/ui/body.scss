@@ -1,0 +1,118 @@
+@import "../../client/_vars.scss";
+
+body {
+  background-color: $background-colour;
+}
+
+.inline-iframe {
+  width: 100%;
+  border: none;
+  height: 436px;
+  overflow: hidden;
+}
+
+.message-area {
+  padding-top: 15px;
+  margin-bottom: 0;
+}
+
+.message {
+  border-radius: 16px;
+  padding: ($padding-in-message - 4px) $padding-in-message ($padding-in-message - 2px);
+  border: 1px solid gray;
+  width: 80%;
+  overflow: hidden;
+  font-size: 16px;
+
+  video {
+    margin: (-1 * $padding-in-message + 4px) (-1 * $padding-in-message) (-2 * $padding-in-message + 7px);
+    width: calc(100% + #{$padding-in-message * 2});
+    max-width: none;
+  }
+}
+
+.message-bot {
+  background-color: $background-colour-bot;
+  float: left;
+}
+
+.message-user {
+  background-color: $background-colour-user;
+  color: white;
+  text-align: right;
+  float: right;
+  direction: rtl;
+}
+
+.message-talking {
+  font-size: 24px;
+  padding: ($padding-in-message - 10px) $padding-in-message ($padding-in-message - 8px);
+  width: auto;
+  direction: ltr;
+}
+
+// Animated talking dots (https://martinwolf.org/blog/2015/01/pure-css-savingloading-dots-animation)
+@keyframes blink {
+  /**
+   * At the start of the animation the dot
+   * has an opacity of .2
+   */
+  0% {
+    opacity: .2;
+  }
+  /**
+   * At 20% the dot is fully visible and
+   * then fades out slowly
+   */
+  20% {
+    opacity: 1;
+  }
+  /**
+   * Until it reaches an opacity of .2 and
+   * the animation can start again
+   */
+  100% {
+    opacity: .2;
+  }
+}
+
+.talking span {
+  /**
+   * Use the blink animation, which is defined above
+   */
+  animation-name: blink;
+  /**
+   * The animation should take 1.4 seconds
+   */
+  animation-duration: 1.2s;
+  /**
+   * It will repeat itself forever
+   */
+  animation-iteration-count: infinite;
+  /**
+   * This makes sure that the starting style (opacity: .2)
+   * of the animation is applied before the animation starts.
+   * Otherwise we would see a short flash or would have
+   * to set the default styling of the dots to the same
+   * as the animation. Same applies for the ending styles.
+   */
+  animation-fill-mode: both;
+}
+
+.talking span:nth-child(2) {
+  /**
+   * Starts the animation of the third dot
+   * with a delay of .2s, otherwise all dots
+   * would animate at the same time
+   */
+  animation-delay: .4s;
+}
+
+.talking span:nth-child(3) {
+  /**
+   * Starts the animation of the third dot
+   * with a delay of .4s, otherwise all dots
+   * would animate at the same time
+   */
+  animation-delay: .8s;
+}
