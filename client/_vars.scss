@@ -1,0 +1,15 @@
+@charset "UTF-8";
+@import "../node_modules/bootstrap/scss/_mixins.scss";
+
+// Colors
+$background-colour: lightcyan !default;
+$background-colour-user: blue !default;
+$background-colour-bot: white !default;
+$border-colour: gray !default;
+
+// Others
+$padding-in-message: 12px !default;
+
+// Default Variables
+@import "../node_modules/bootstrap/scss/_variables.scss";
+@import "../node_modules/bootstrap/scss/_custom.scss";
