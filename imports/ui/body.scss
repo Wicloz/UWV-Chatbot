@@ -42,14 +42,12 @@ body {
   color: $hoofdkleuren-uwv-wit;
   text-align: right;
   float: right;
-  direction: rtl;
 }
 
 .message-talking {
   font-size: 24px;
   padding: ($padding-in-message - 10px) $padding-in-message ($padding-in-message - 8px);
   width: auto;
-  direction: ltr;
 }
 
 // Animated talking dots (https://martinwolf.org/blog/2015/01/pure-css-savingloading-dots-animation)
