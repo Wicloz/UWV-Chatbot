@@ -12,6 +12,7 @@ function conversation() {
 // On Created
 Template.body.onCreated(function() {
   Session.set("IsUser", true);
+  Session.set("ChatActive", false);
   const getId = Conversations.insert({
     withBot: true,
     botTalking: true,
@@ -55,6 +56,9 @@ Template.body.helpers({
   },
   conversation() {
     return conversation();
+  },
+  chatActive() {
+    return Session.get('ChatActive');
   }
 });
 
@@ -122,5 +126,14 @@ Template.body.events({
     Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"),
       !(event.target.value.length <= 1 && event.keyCode === 8) && event.keyCode !== 13
     );
+  },
+  'click .btn-open'(event) {
+    Session.set("ChatActive", true);
+  },
+  'click .btn-close'(event) {
+    Session.set("ChatActive", false);
+    $('video').each(function() {
+      $(this)[0].pause();
+    });
   }
 });

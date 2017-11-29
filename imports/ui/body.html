@@ -1,57 +1,66 @@
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col-md">
+  <iframe src="https://www.uwv.nl/particulieren/werkloos/index.aspx" class="iframe-main"></iframe>
 
-        <ul class="list-unstyled message-area">
-          {{#each message in messages}}
-            <li>
-              <blockquote class="blockquote message {{#if message.fromUser}}message-user{{else}}message-bot{{/if}}">
-                {{#if message.isText}}
-                  <span>{{{message.content}}}</span>
-                {{else if message.isVideo}}
-                  <video src="{{message.content}}" controls></video>
-                {{else if message.isIframe}}
-                  <iframe class="inline-iframe" src="{{message.content}}"></iframe>
-                {{/if}}
-              </blockquote>
-            </li>
-            <div style="clear: both;"></div>
-          {{/each}}
-          {{#if conversation.botTalking}}
-            <li>
-              <blockquote class="blockquote message message-talking message-bot">
-                <span class="talking"><span>•</span><span>•</span><span>•</span></span>
-              </blockquote>
-            </li>
-            <div style="clear: both;"></div>
-          {{/if}}
-        </ul>
+  <div class="chat-area-full fixed-bottom">
 
-        <form id="form-send-message">
-          <div class="input-group">
-            <input class="form-control" type="text" name="text" id="message-input" autocomplete="off" placeholder="Stuur Bericht ...">
-            <span class="input-group-btn">
-              <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i></button>
-            </span>
-          </div>
-        </form>
-
+    <div class="chat-area-chat {{#unless chatActive}}hidden{{/unless}}">
+      <div class="chat-area-header">
+        <img class="pull-left image" src="/alex.png">
+        <span class="text">UVW Chatbot</span>
+        <button class="btn btn-close pull-right">✕</button>
       </div>
-      <!--<div class="col-md">-->
 
-        <!--<form id="form-switch-conversation">-->
-          <!--<div class="input-group">-->
-            <!--<input class="form-control" type="text" name="text" placeholder="Wissel Gesprek">-->
-            <!--<span class="input-group-btn">-->
-              <!--<button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i></button>-->
-            <!--</span>-->
-          <!--</div>-->
-        <!--</form>-->
+      <ul class="list-unstyled chat-area-messages">
+        {{#each message in messages}}
+          <li>
+            <p class="chat-message {{#if message.fromUser}}chat-message-user{{else}}chat-message-bot{{/if}}">
+              {{#if message.isText}}
+                <span>{{{message.content}}}</span>
+              {{else if message.isVideo}}
+                <video src="{{message.content}}" controls></video>
+              {{else if message.isIframe}}
+                <iframe src="{{message.content}}"></iframe>
+              {{/if}}
+            </p>
+          </li>
+          <div style="clear: both;"></div>
+        {{/each}}
+        {{#if conversation.botTalking}}
+          <li>
+            <p class="chat-message chat-message-talking chat-message-bot">
+              <span class="talking"><span>•</span><span>•</span><span>•</span></span>
+            </p>
+          </li>
+          <div style="clear: both;"></div>
+        {{/if}}
+      </ul>
 
-        <!--<h5>{{conversation._id}}</h5>-->
-
-      <!--</div>-->
+      <form id="form-send-message" class="chat-area-form">
+        <div class="input-group">
+          <input class="form-control" type="text" name="text" id="message-input" autocomplete="off" placeholder="Stuur Bericht ...">
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+          </span>
+        </div>
+      </form>
     </div>
+
+    <div class="chat-area-buttons">
+      <button class="btn chat-oc-button btn-open {{#if chatActive}}hidden{{/if}}"><i class="fa fa-commenting" aria-hidden="true"></i></button>
+      <button class="btn chat-oc-button btn-close {{#unless chatActive}}hidden{{/unless}}"><i class="fa fa-times" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="hidden">
+      <form id="form-switch-conversation">
+        <div class="input-group">
+          <input class="form-control" type="text" name="text" placeholder="Wissel Gesprek">
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i></button>
+          </span>
+        </div>
+      </form>
+      <h5>{{conversation._id}}</h5>
+    </div>
+
   </div>
 </body>
