@@ -21,7 +21,7 @@ Schemas.Message = new SimpleSchema({
     type: String,
     required: false
   },
-    fromUser: {
+  fromUser: {
     type: Boolean
   },
   timeSent: {

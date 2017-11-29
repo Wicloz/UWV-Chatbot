@@ -11,8 +11,8 @@ function conversation() {
 
 function fixMessageScroll() {
   Tracker.afterFlush(function () {
-    let chat = $('.chat-area-messages');
-    chat.scrollTop(chat.prop('scrollHeight'));
+    let chat = $(".chat-area-messages");
+    chat.scrollTop(chat.prop("scrollHeight"));
   });
 }
 
@@ -24,6 +24,7 @@ Template.body.onCreated(function() {
     withBot: true,
     botTalking: true,
     userTalking: false,
+    handlingUserMessage: 0
   });
   Session.set("ConversationId", getId);
 });
@@ -33,7 +34,7 @@ Template.body.onRendered(function() {
   let timeName = "";
   const hours = new Date().getHours();
   if (hours >= 19 && hours < 23) {
-    timeName = "Goedeavond";
+    timeName = "Goedenavond";
   } else if (hours >= 23 || hours < 7) {
     timeName = "Goedenacht";
   } else if (hours >= 7 && hours < 12) {
@@ -61,7 +62,7 @@ Template.body.helpers({
     return conversation();
   },
   chatActive() {
-    return Session.get('ChatActive');
+    return Session.get("ChatActive");
   }
 });
 
@@ -93,8 +94,8 @@ Template.body.events({
     const target = event.target;
     const text = target.text.value;
 
-    // Stop on empty value or talking bot
-    if (text === "" || conversation().botTalking) {
+    // Stop on empty value
+    if (text === "") {
       return;
     }
 
@@ -103,13 +104,16 @@ Template.body.events({
 
     // Send user message
     Meteor.call("conversations.sendMessage", Session.get("ConversationId"), text, "text", Session.get("IsUser"));
+    Meteor.call("conversations.incrementUserCount", Session.get("ConversationId"));
 
     // Handle bot message
     if (conversation().withBot) {
       Meteor.call("conversations.botResponse", Session.get("ConversationId"), text);
+    } else {
+      Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), false, false);
     }
 
-    // Clear form
+    // Reset form
     target.text.value = "";
     target.text.focus();
   },
@@ -138,7 +142,7 @@ Template.body.events({
     Session.set("ConversationId", text);
     Meteor.call("conversations.updateBotState", Session.get("ConversationId"), false);
 
-    // Clear form
+    // Reset forms
     target.text.value = "";
     document.getElementById("message-input").value = "";
     document.getElementById("message-input").focus();
@@ -156,7 +160,7 @@ Template.body.events({
   },
   'click .btn-close'(event) {
     Session.set("ChatActive", false);
-    $('video').each(function() {
+    $("video").each(function() {
       $(this)[0].pause();
     });
   }

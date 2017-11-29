@@ -23,6 +23,9 @@ Schemas.Conversation = new SimpleSchema({
   },
   userTalking: {
     type: Boolean
+  },
+  handlingUserMessage: {
+    type: SimpleSchema.Integer
   }
 }, { tracker: Tracker });
 
@@ -35,8 +38,15 @@ Conversations.helpers({
 
 // Methods
 Meteor.methods({
-  'conversations.sendMessage'(conversationId, message, type, forUser, contentBotMeta="") {
-    Meteor.call("conversations.updateTalkingState", conversationId, forUser, false);
+  'conversations.incrementUserCount'(conversationId) {
+    Conversations.update(conversationId, {
+      $set: {
+        handlingUserMessage: Conversations.findOne({_id: conversationId}).handlingUserMessage + 1
+      }
+    });
+  },
+  'conversations.sendMessage'(conversationId, message, type, forUser, contentBotMeta="", newTalkingState=false) {
+    Meteor.call("conversations.updateTalkingState", conversationId, forUser, newTalkingState);
     Messages.insert({
       conversationId: conversationId,
       content: message,
@@ -69,8 +79,10 @@ Meteor.methods({
     }
   },
   'conversations.botResponse'(conversationId, userMessage) {
-    // Set talking state and stop on client
+    // Set talking state
     Meteor.call("conversations.updateTalkingState", conversationId, false, true);
+
+    // Stop on client
     if (!Meteor.isServer) {
       return;
     }
@@ -78,6 +90,7 @@ Meteor.methods({
     // Prepare responses
     let responses = [];
     let meta = "unknown";
+    let userCount = Conversations.findOne({_id: conversationId}).handlingUserMessage;
 
     // Define and rank possible questions
     let possibilities = [
@@ -307,18 +320,43 @@ Meteor.methods({
     }
 
     // Send responses
-    for (let i = 0; i < responses.length; i++) {
-      Meteor.setTimeout(() => {
-        Meteor.call("conversations.sendMessage", conversationId, responses[i].message, responses[i].type, false, meta);
-        if (i !== responses.length - 1) {
-          Meteor.call("conversations.updateTalkingState", conversationId, false, true);
-        }
-      }, 1400 * (i + 1));
-    }
+    sendResponses(conversationId, responses, meta, userCount);
   }
 });
 
 // Functions
+function sendResponses(conversationId, responses, meta, userCount, sentResponses=[]) {
+  // Stop if done
+  if (responses.length <= 0) {
+    Meteor.call("conversations.updateTalkingState", conversationId, false, false);
+    return;
+  }
+
+  // Determine wait time
+  let timeWait = 1000;
+  if (sentResponses.length > 0 && sentResponses[sentResponses.length - 1].type === "text") {
+    const tokenizer = new natural.WordTokenizer();
+    timeWait = (tokenizer.tokenize(sentResponses[sentResponses.length - 1].message).length / 220) * 60000; // 220 wpm
+  }
+
+  // Move response to sent array
+  let response = responses[0];
+  responses.splice(0, 1);
+  sentResponses.push(response);
+
+  // Wait
+  Meteor.setTimeout(() => {
+    // Stop if the user typed again
+    if (userCount !== Conversations.findOne({_id: conversationId}).handlingUserMessage) {
+      return;
+    }
+
+    // Send response and call function again
+    Meteor.call("conversations.sendMessage", conversationId, response.message, response.type, false, meta, true);
+    sendResponses(conversationId, responses, meta, userCount, sentResponses);
+  }, timeWait);
+}
+
 function sentenceSimilarity(a, b) {
   const tokenizer = new natural.WordTokenizer();
 
