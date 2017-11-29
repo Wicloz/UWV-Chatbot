@@ -58,7 +58,7 @@ body {
       overflow: auto;
       width: 100%;
       margin-bottom: 0;
-      height: calc(100vh - 60px - 36px);
+      height: calc(100vh - 60px - 37px);
       @include media-breakpoint-up(md) {
         height: 60vh;
       }
@@ -89,7 +89,8 @@ body {
 
     .chat-oc-button {
       padding: 0;
-      background-color: $hoofdkleuren-uwv-groen;
+      background-color: $uwv-roos;
+      color: $hoofdkleuren-uwv-wit;
       border-radius: 50%;
       height: 60px;
       line-height: 60px;

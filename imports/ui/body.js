@@ -9,6 +9,13 @@ function conversation() {
   });
 }
 
+function fixMessageScroll() {
+  Tracker.afterFlush(function () {
+    let chat = $('.chat-area-messages');
+    chat.scrollTop(chat.prop('scrollHeight'));
+  });
+}
+
 // On Created
 Template.body.onCreated(function() {
   Session.set("IsUser", true);
@@ -23,11 +30,8 @@ Template.body.onCreated(function() {
 
 // On Rendered
 Template.body.onRendered(function() {
-  document.getElementById("message-input").focus();
-
   let timeName = "";
   const hours = new Date().getHours();
-
   if (hours >= 19 && hours < 23) {
     timeName = "Goedeavond";
   } else if (hours >= 23 || hours < 7) {
@@ -37,7 +41,6 @@ Template.body.onRendered(function() {
   } else if (hours >= 12 && hours < 19) {
     timeName = "Goedemiddag";
   }
-
   Meteor.setTimeout(() => {
     Meteor.call("conversations.sendMessage", Session.get("ConversationId"), timeName + ", hoe kan ik U helpen?", "text", false);
   }, 1000);
@@ -60,6 +63,24 @@ Template.body.helpers({
   chatActive() {
     return Session.get('ChatActive');
   }
+});
+
+// Autorun
+Tracker.autorun(function() {
+  Conversations.find({
+    _id: Session.get("ConversationId")
+  }).observeChanges({
+    changed: function(id, fields) {
+      fixMessageScroll();
+    }
+  });
+  Messages.find({
+    conversationId: Session.get("ConversationId")
+  }).observeChanges({
+    added: function(id, fields) {
+      fixMessageScroll();
+    }
+  });
 });
 
 // Events
@@ -129,6 +150,9 @@ Template.body.events({
   },
   'click .btn-open'(event) {
     Session.set("ChatActive", true);
+    Tracker.afterFlush(function () {
+      document.getElementById("message-input").focus();
+    });
   },
   'click .btn-close'(event) {
     Session.set("ChatActive", false);
