@@ -26,7 +26,7 @@ body {
       border: 1px solid $hoofdkleuren-uwv-blauw;
       border-radius: 8px;
       overflow: hidden;
-      height: 60vh;
+      height: calc(60vh + 2px);
     }
 
     .btn-character {
@@ -90,22 +90,14 @@ body {
       overflow: auto;
       width: 100%;
       margin-bottom: 0;
-      height: calc(100vh - 60px - 37px);
+      height: calc(100vh - 60px - 54px);
       @include media-breakpoint-up(md) {
-        height: calc(60vh - 60px - 37px);
+        height: calc(60vh - 60px - 54px);
       }
     }
 
     .chat-area-form {
-      .form-control {
-        font-size: 1.1rem;
-        border: none;
-        border-radius: 0;
-      }
-      .btn {
-        border: none;
-        border-radius: 0;
-      }
+      padding: $spacer/2;
     }
   }
 
