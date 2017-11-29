@@ -18,6 +18,9 @@ Schemas.Conversation = new SimpleSchema({
   withBot: {
     type: Boolean
   },
+  characterName: {
+    type: String
+  },
   botTalking: {
     type: Boolean
   },

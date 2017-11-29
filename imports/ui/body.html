@@ -3,11 +3,53 @@
 
   <div class="chat-area-full fixed-bottom">
 
-    <div class="chat-area-chat {{#unless chatActive}}hidden{{/unless}}">
-      <div class="chat-area-header">
-        <img class="pull-left image" src="/characters/alex.png">
-        <span class="text">Alex</span>
-        <button class="btn btn-close pull-right">✕</button>
+    <div class="container-fluid chat-area-characters {{#unless charactersOpen}}hidden{{/unless}}">
+      <div class="row">
+        <div class="col-1"></div>
+
+        <div class="col-9">
+          <div class="row">
+            <div class="col">
+              <h2>UWV Chatbot</h2>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <button id="btn-character-alex" class="btn btn-character"><img src="/characters/Alex.png"></button>
+              <p>Alex</p>
+            </div>
+            <div class="col">
+              <button id="btn-character-iris" class="btn btn-character"><img src="/characters/Iris.png"></button>
+              <p>Iris</p>
+            </div>
+            <div class="col">
+              <button id="btn-character-jelger" class="btn btn-character"><img src="/characters/Jelger.png"></button>
+              <p>Jelger</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-1">
+          <button class="btn btn-close">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid chat-area-chat {{#unless chatOpen}}hidden{{/unless}}">
+      <div class="chat-area-header row align-items-center">
+        <div class="col-2">
+          <button class="btn btn-exit">&lt;</button>
+        </div>
+        <div class="col-3">
+          <img class="chat-header-image" src="/characters/{{conversation.characterName}}.png">
+        </div>
+        <div class="col-4">
+          <h3 class="chat-header-text">{{conversation.characterName}}</h3>
+          <span class="chat-header-subtext">Jouw virtuele assistent</span>
+        </div>
+        <div class="col-2">
+          <button class="btn btn-close">✕</button>
+        </div>
       </div>
 
       <ul class="list-unstyled chat-area-messages">
@@ -48,18 +90,6 @@
     <div class="chat-area-buttons">
       <button class="btn chat-oc-button btn-open {{#if chatActive}}hidden{{/if}}"><i class="fa fa-commenting" aria-hidden="true"></i></button>
       <button class="btn chat-oc-button btn-close {{#unless chatActive}}hidden{{/unless}}"><i class="fa fa-times" aria-hidden="true"></i></button>
-    </div>
-
-    <div class="hidden">
-      <form id="form-switch-conversation">
-        <div class="input-group">
-          <input class="form-control" type="text" name="text" placeholder="Wissel Gesprek">
-          <span class="input-group-btn">
-            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i></button>
-          </span>
-        </div>
-      </form>
-      <h5>{{conversation._id}}</h5>
     </div>
 
   </div>

@@ -16,8 +16,41 @@ body {
     margin: $spacer $spacer*2 $spacer 70%;
   }
 
+  .chat-area-characters {
+    background-color: $hoofdkleuren-uwv-blauw;
+    height: 100vh;
+    color: $hoofdkleuren-uwv-wit;
+    text-align: center;
+    padding-top: $spacer;
+    @include media-breakpoint-up(md) {
+      border: 1px solid $hoofdkleuren-uwv-blauw;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 60vh;
+    }
+
+    .btn-character {
+      background: none;
+      padding: 0;
+      width: 100%;
+      img {
+        width: 100%;
+        background-color: $hoofdkleuren-uwv-wit;
+        border: 1px solid $achtergrondkleuren-uwv-grijs;
+        border-radius: 50%;
+      }
+    }
+
+    .btn-close {
+      color: inherit;
+      font-size: 28px;
+      background: none;
+    }
+  }
+
   .chat-area-chat {
     background-color: $achtergrondkleuren-uwv-lichtblauw;
+    padding: 0;
     @include media-breakpoint-up(md) {
       border: 1px solid $hoofdkleuren-uwv-blauw;
       border-radius: 8px;
@@ -28,27 +61,26 @@ body {
       color: $hoofdkleuren-uwv-wit;
       background-color: $hoofdkleuren-uwv-blauw;
       height: 60px;
-      line-height: 60px;
-      padding-left: 10px;
       text-align: center;
 
-      .image {
+      .chat-header-image {
         height: 50px;
         width: 50px;
         background-color: $hoofdkleuren-uwv-wit;
         border: 1px solid $achtergrondkleuren-uwv-grijs;
         border-radius: 50%;
-        margin-top: 4px;
       }
 
-      .text {
-        font-size: 20px;
+      .chat-header-text {
+        margin-bottom: 0;
+      }
+      .chat-header-subtext {
+        font-size: 8px;
       }
 
-      .btn-close {
+      .btn-close, .btn-exit {
         color: inherit;
-        padding-top: 11px;
-        font-size: 30px;
+        font-size: 28px;
         background: none;
       }
     }
@@ -60,7 +92,7 @@ body {
       margin-bottom: 0;
       height: calc(100vh - 60px - 37px);
       @include media-breakpoint-up(md) {
-        height: 60vh;
+        height: calc(60vh - 60px - 37px);
       }
     }
 

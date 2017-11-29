@@ -16,21 +16,16 @@ function fixMessageScroll() {
   });
 }
 
-// On Created
-Template.body.onCreated(function() {
-  Session.set("IsUser", true);
-  Session.set("ChatActive", false);
+function startConversation(characterName) {
   const getId = Conversations.insert({
     withBot: true,
+    characterName: characterName,
     botTalking: true,
     userTalking: false,
     handlingUserMessage: 0
   });
   Session.set("ConversationId", getId);
-});
 
-// On Rendered
-Template.body.onRendered(function() {
   let timeName = "";
   const hours = new Date().getHours();
   if (hours >= 19 && hours < 23) {
@@ -43,8 +38,15 @@ Template.body.onRendered(function() {
     timeName = "Goedemiddag";
   }
   Meteor.setTimeout(() => {
-    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), timeName + ", hoe kan ik U helpen?", "text", false);
+    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), timeName + ", hoe kan ik je helpen?", "text", false);
   }, 1000);
+}
+
+// On Created
+Template.body.onCreated(function() {
+  Session.set("IsUser", true);
+  Session.set("ChatActive", true);
+  Session.set("ConversationId", false);
 });
 
 // Helpers
@@ -63,6 +65,12 @@ Template.body.helpers({
   },
   chatActive() {
     return Session.get("ChatActive");
+  },
+  chatOpen() {
+    return Session.get("ChatActive") && conversation();
+  },
+  charactersOpen() {
+    return Session.get("ChatActive") && !conversation();
   }
 });
 
@@ -117,6 +125,7 @@ Template.body.events({
     target.text.value = "";
     target.text.focus();
   },
+
   'submit #form-switch-conversation'(event) {
     // Prevent default browser form submit
     event.preventDefault();
@@ -147,11 +156,13 @@ Template.body.events({
     document.getElementById("message-input").value = "";
     document.getElementById("message-input").focus();
   },
+
   'keydown #message-input'(event) {
     Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"),
       !(event.target.value.length <= 1 && event.keyCode === 8) && event.keyCode !== 13
     );
   },
+
   'click .btn-open'(event) {
     Session.set("ChatActive", true);
     Tracker.afterFlush(function () {
@@ -163,5 +174,19 @@ Template.body.events({
     $("video").each(function() {
       $(this)[0].pause();
     });
+  },
+
+  'click .btn-exit'(event) {
+    Session.set("ConversationId", false);
+  },
+
+  'click #btn-character-alex'(event) {
+    startConversation("Alex");
+  },
+  'click #btn-character-iris'(event) {
+    startConversation("Iris");
+  },
+  'click #btn-character-jelger'(event) {
+    startConversation("Jelger");
   }
 });
