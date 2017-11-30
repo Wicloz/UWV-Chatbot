@@ -97,17 +97,53 @@ Meteor.methods({
 
     // Define and rank possible questions
     let possibilities = [
-      ["voorwaarden", sentenceSimilarity(userMessage, "Welke voorwaarden zijn er om een ww-uitkering te krijgen?")],
-      ["voorwaarden", sentenceSimilarity(userMessage, "Mag ik een ww-uitkering krijgen?")],
-      ["weerwerken", sentenceSimilarity(userMessage, "Ik ga weer werken. Hoe wordt dit verrekend met mijn ww-uitkering?")],
-      ["overmaken", sentenceSimilarity(userMessage, "Wanneer wordt mijn ww-uitkering overgemaakt?")],
-      ["dagloon", sentenceSimilarity(userMessage, "Hoe wordt de hoogte van mijn dagloon berekend?")],
-      ["dagloon", sentenceSimilarity(userMessage, "Hoeveel uitkering kan ik verwachten te krijgen?")],
-      ["wanneer", sentenceSimilarity(userMessage, "Wanneer kan ik een ww-uitkering aanvragen?")],
-      ["hoelang", sentenceSimilarity(userMessage, "Hoelang heb ik recht op een ww-uitkering?")],
-      ["aanvragen", sentenceSimilarity(userMessage, "Hoe kan ik een ww-uitkering aanvragen?")],
-      ["aanvragen", sentenceSimilarity(userMessage, "Wat moet ik doen om een ww-uitkering te krijgen?")],
-      ["eerstebetaling", sentenceSimilarity(userMessage, "Wanneer krijg ik de eerste betaling van mijn ww-uitkering?")]
+      ["help", sentenceSimilarityMultiple(userMessage, [
+        "Ik heb hulp nodig.",
+        "help",
+        "ja",
+        "inderdaad",
+      ])],
+      ["groet", sentenceSimilarityMultiple(userMessage, [
+        "hallo",
+        "groeten",
+      ])],
+      ["nee", sentenceSimilarityMultiple(userMessage, [
+        "Ik ben voldoende geholpen.",
+        "nee",
+        "niet",
+      ])],
+      ["voorwaarden", sentenceSimilarityMultiple(userMessage, [
+        "Welke voorwaarden zijn er om een ww-uitkering te krijgen?",
+        "Mag ik een ww-uitkering krijgen?",
+      ])],
+      ["weerwerken", sentenceSimilarityMultiple(userMessage, [
+        "Ik ga weer werken. Hoe wordt dit verrekend met mijn ww-uitkering?",
+      ])],
+      ["overmaken", sentenceSimilarityMultiple(userMessage, [
+        "Wanneer wordt mijn ww-uitkering overgemaakt?",
+      ])],
+      ["dagloon", sentenceSimilarityMultiple(userMessage, [
+        "Hoe wordt de hoogte van mijn dagloon berekend?",
+        "Hoeveel uitkering kan ik verwachten te krijgen?",
+      ])],
+      ["wanneer", sentenceSimilarityMultiple(userMessage, [
+        "Wanneer kan ik een ww-uitkering aanvragen?",
+      ])],
+      ["hoelang", sentenceSimilarityMultiple(userMessage, [
+        "Hoelang heb ik recht op een ww-uitkering?",
+      ])],
+      ["aanvragen", sentenceSimilarityMultiple(userMessage, [
+        "Hoe kan ik een ww-uitkering aanvragen?",
+        "Wat moet ik doen om een ww-uitkering te krijgen?",
+      ])],
+      ["eerstebetaling", sentenceSimilarityMultiple(userMessage, [
+        "Wanneer krijg ik de eerste betaling van mijn ww-uitkering?",
+      ])],
+      ["raakkwijt", sentenceSimilarityMultiple(userMessage, [
+        "Ik raak binnenkort mogelijk mijn baan kwijt.",
+        "Wat moet ik doen als ik werkloos wordt?",
+        "Ik wordt werkloos?",
+      ])]
     ];
 
     // Sort possibilities
@@ -118,9 +154,38 @@ Meteor.methods({
     console.log(possibilities);
 
     // Set responses for the best possibility
-    if (possibilities[0][1] > 0.2) {
+    if (possibilities[0][1] > 0.5) {
       meta = possibilities[0][0];
       switch (meta) {
+
+        case "help":
+          responses.push({
+            message: "Stel een vraag en ik zal mijn best doen hem te beantwoorden.",
+            type: "text"
+          });
+          break;
+
+        case "groet":
+          responses.push({
+            message: "Hallo. 👋",
+            type: "text"
+          });
+          responses.push({
+            message: "Stel een vraag en ik zal mijn best doen hem te beantwoorden.",
+            type: "text"
+          });
+          break;
+
+        case "nee":
+          responses.push({
+            message: "Hopelijk ben je dan voldoende geholpen.",
+            type: "text"
+          });
+          responses.push({
+            message: "Tot ziens. 👋",
+            type: "text"
+          });
+          break;
 
         case "voorwaarden":
           responses.push({
@@ -303,11 +368,32 @@ Meteor.methods({
           });
           break;
 
+        case "raakkwijt":
+          responses.push({
+            message: "Dat is vervelend om te horen.",
+            type: "text"
+          });
+          responses.push({
+            message: "Zie <a href=\"https://www.uwv.nl/particulieren/werkloos/ik-word-werkloos/detail/stappenplan-ww-wegwijzer-ww-app\">deze pagina<a> voor een stappenplan.",
+            type: "text"
+          });
+          responses.push({
+            message: "We hebben ook een informatieve video gemaakt voor je.",
+            type: "text"
+          });
+          responses.push({
+            message: "https://uwvvod.download.kpnstreaming.nl/uwvvideo/ww-uitkering-aanvragen/ww-uitkering-aanvragen.mp4",
+            type: "video"
+          });
+          break;
+
       }
-      responses.push({
-        message: "Heeft U verder nog vragen?",
-        type: "text"
-      });
+      if (meta !== "help" && meta !== "groet" && meta !== "nee") {
+        responses.push({
+          message: "Heeft U verder nog vragen?",
+          type: "text"
+        });
+      }
     }
 
     // Set response if no possibility was found
@@ -339,7 +425,7 @@ function sendResponses(conversationId, responses, meta, userCount, sentResponses
   let timeWait = 1000;
   if (sentResponses.length > 0 && sentResponses[sentResponses.length - 1].type === "text") {
     const tokenizer = new natural.WordTokenizer();
-    timeWait = (tokenizer.tokenize(sentResponses[sentResponses.length - 1].message).length / 220) * 60000; // 220 wpm
+    timeWait = (tokenizer.tokenize(sentResponses[sentResponses.length - 1].message.replace(/<.*?>/g, "")).length / 220) * 60000; // 220 wpm
   }
 
   // Move response to sent array
@@ -360,6 +446,17 @@ function sendResponses(conversationId, responses, meta, userCount, sentResponses
   }, timeWait);
 }
 
+function sentenceSimilarityMultiple(a, b=[]) {
+  let results = [];
+  b.forEach((value) => {
+    results.push(sentenceSimilarity(a, value));
+  });
+  results.sort((first, second) => {
+    return second - first;
+  });
+  return results[0];
+}
+
 function sentenceSimilarity(a, b) {
   const tokenizer = new natural.WordTokenizer();
 
@@ -371,5 +468,5 @@ function sentenceSimilarity(a, b) {
   console.log([a, b]);
   console.log(similarity);
 
-  return similarity.score * similarity.exact * similarity.order * similarity.size;
+  return (similarity.score + similarity.exact) * similarity.order * similarity.size;
 }
