@@ -110,15 +110,17 @@ Meteor.methods({
       ])],
       ["nee", sentenceSimilarityMultiple(userMessage, [
         "Ik ben voldoende geholpen.",
+        "Die heb ik niet.",
         "nee",
-        "niet",
       ])],
       ["voorwaarden", sentenceSimilarityMultiple(userMessage, [
         "Welke voorwaarden zijn er om een ww-uitkering te krijgen?",
         "Mag ik een ww-uitkering krijgen?",
       ])],
       ["weerwerken", sentenceSimilarityMultiple(userMessage, [
-        "Ik ga weer werken. Hoe wordt dit verrekend met mijn ww-uitkering?",
+        "Ik ga weer werken. Hoe wordt dit verrekend?",
+        "Wat als ik weer ga werken?",
+        "Hoe beinvloed werken mijn ww-uitkering?",
       ])],
       ["overmaken", sentenceSimilarityMultiple(userMessage, [
         "Wanneer wordt mijn ww-uitkering overgemaakt?",
@@ -155,7 +157,7 @@ Meteor.methods({
     console.log(possibilities);
 
     // Set responses for the best possibility
-    if (possibilities[0][1] > 0.5) {
+    if (possibilities[0][1] > 2) {
       meta = possibilities[0][0];
       switch (meta) {
 
@@ -469,5 +471,5 @@ function sentenceSimilarity(a, b) {
   console.log([a, b]);
   console.log(similarity);
 
-  return (similarity.score + similarity.exact) * similarity.order * similarity.size;
+  return (similarity.score + similarity.exact + similarity.order) * Math.min(a.length / b.length, 1);
 }
