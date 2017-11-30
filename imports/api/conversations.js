@@ -106,6 +106,7 @@ Meteor.methods({
       ["groet", sentenceSimilarityMultiple(userMessage, [
         "hallo",
         "groeten",
+        "hi",
       ])],
       ["nee", sentenceSimilarityMultiple(userMessage, [
         "Ik ben voldoende geholpen.",
@@ -182,7 +183,7 @@ Meteor.methods({
             type: "text"
           });
           responses.push({
-            message: "Tot ziens. 👋",
+            message: "Tot ziens.",
             type: "text"
           });
           break;
