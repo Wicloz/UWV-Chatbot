@@ -45,7 +45,7 @@ function startConversation(characterName) {
 // On Created
 Template.body.onCreated(function() {
   Session.set("IsUser", true);
-  Session.set("ChatActive", true);
+  Session.set("ChatActive", false);
   Session.set("ConversationId", false);
 });
 
