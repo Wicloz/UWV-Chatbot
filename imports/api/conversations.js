@@ -48,6 +48,7 @@ Meteor.methods({
       }
     });
   },
+
   'conversations.sendMessage'(conversationId, message, type, forUser, contentBotMeta="", newTalkingState=false) {
     Meteor.call("conversations.updateTalkingState", conversationId, forUser, newTalkingState);
     Messages.insert({
@@ -59,6 +60,7 @@ Meteor.methods({
       timeSent: new Date()
     });
   },
+
   'conversations.updateBotState'(conversationId, to) {
     Conversations.update(conversationId, {
       $set: {
@@ -66,6 +68,7 @@ Meteor.methods({
       }
     });
   },
+
   'conversations.updateTalkingState'(conversationId, forUser, to) {
     if (forUser) {
       Conversations.update(conversationId, {
@@ -81,6 +84,7 @@ Meteor.methods({
       });
     }
   },
+
   'conversations.botResponse'(conversationId, userMessage) {
     // Set talking state
     Meteor.call("conversations.updateTalkingState", conversationId, false, true);
@@ -107,6 +111,11 @@ Meteor.methods({
         "hallo",
         "groeten",
         "hi",
+        "goedenavond",
+        "goedenacht",
+        "goedemiddag",
+        "goedemorgen",
+        "goedeochtend"
       ])],
       ["nee", sentenceSimilarityMultiple(userMessage, [
         "Ik ben voldoende geholpen.",

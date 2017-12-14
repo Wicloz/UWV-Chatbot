@@ -38,7 +38,7 @@ function startConversation(characterName) {
     timeName = "Goedemiddag";
   }
   Meteor.setTimeout(() => {
-    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), timeName + ", hoe kan ik je helpen?", "text", false);
+    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), timeName + ", hoe kan ik u helpen?", "text", false);
   }, 1000);
 }
 
