@@ -98,16 +98,20 @@ Meteor.methods({
     let responses = [];
     let meta = "unknown";
     let userCount = Conversations.findOne({_id: conversationId}).handlingUserMessage;
+    let responded = false;
 
-    // Define and rank possible questions
-    let possibilities = [
-      ["help", sentenceSimilarityMultiple(userMessage, [
-        "Ik heb hulp nodig.",
-        "help",
-        "ja",
-        "inderdaad",
-      ])],
-      ["groet", sentenceSimilarityMultiple(userMessage, [
+    // Check for non question flags
+    if (sentenceSimilarityMultiple(userMessage, [
+        "bedankt",
+        "dank"
+      ]) > 0.5) {
+      responses.push({
+        message: "Graag gedaan.",
+        type: "text"
+      });
+      responded = true;
+    }
+    if (sentenceSimilarityMultiple(userMessage, [
         "hallo",
         "groeten",
         "hi",
@@ -115,13 +119,37 @@ Meteor.methods({
         "goedenacht",
         "goedemiddag",
         "goedemorgen",
-        "goedeochtend"
-      ])],
-      ["nee", sentenceSimilarityMultiple(userMessage, [
+        "goedenochtend"
+      ]) > 0.5) {
+      responses.push({
+        message: currentTimeGreeting() + ".",
+        type: "text"
+      });
+      responded = true;
+    }
+    if (sentenceSimilarityMultiple(userMessage, [
+        "Ik heb hulp nodig.",
+        "help"
+      ]) > 0.5) {
+      responses.push({
+        message: "Stel een vraag en ik zal mijn best doen hem te beantwoorden.",
+        type: "text"
+      });
+      responded = true;
+    }
+    if (sentenceSimilarityMultiple(userMessage, [
         "Ik ben voldoende geholpen.",
-        "Die heb ik niet.",
-        "nee",
-      ])],
+        "Die heb ik niet."
+      ]) > 0.5) {
+      responses.push({
+        message: "Hopelijk heb ik U hiermee voldoende kunnen informeren.",
+        type: "text"
+      });
+      responded = true;
+    }
+
+    // Define and rank possible questions
+    let possibilities = [
       ["voorwaarden", sentenceSimilarityMultiple(userMessage, [
         "Welke voorwaarden zijn er om een ww-uitkering te krijgen?",
         "Mag ik een ww-uitkering krijgen?",
@@ -154,7 +182,7 @@ Meteor.methods({
       ["raakkwijt", sentenceSimilarityMultiple(userMessage, [
         "Ik raak binnenkort mogelijk mijn baan kwijt.",
         "Wat moet ik doen als ik werkloos wordt?",
-        "Ik wordt werkloos?",
+        "Ik wordt werkloos.",
       ])]
     ];
 
@@ -166,38 +194,9 @@ Meteor.methods({
     console.log(possibilities);
 
     // Set responses for the best possibility
-    if (possibilities[0][1] > 2) {
+    if (possibilities[0][1] > 0.2) {
       meta = possibilities[0][0];
       switch (meta) {
-
-        case "help":
-          responses.push({
-            message: "Stel een vraag en ik zal mijn best doen hem te beantwoorden.",
-            type: "text"
-          });
-          break;
-
-        case "groet":
-          responses.push({
-            message: "Hallo. 👋",
-            type: "text"
-          });
-          responses.push({
-            message: "Stel een vraag en ik zal mijn best doen hem te beantwoorden.",
-            type: "text"
-          });
-          break;
-
-        case "nee":
-          responses.push({
-            message: "Hopelijk ben je dan voldoende geholpen.",
-            type: "text"
-          });
-          responses.push({
-            message: "Tot ziens.",
-            type: "text"
-          });
-          break;
 
         case "voorwaarden":
           responses.push({
@@ -400,22 +399,20 @@ Meteor.methods({
           break;
 
       }
-      if (meta !== "help" && meta !== "groet" && meta !== "nee") {
-        responses.push({
-          message: "Heeft U verder nog vragen?",
-          type: "text"
-        });
-      }
+      responses.push({
+        message: "Heeft U verder nog vragen?",
+        type: "text"
+      });
     }
 
-    // Set response if no possibility was found
-    else {
+    // Set response if no possibility was found and no flag was set
+    else if (!responded) {
       responses.push({
-        message: "Het spijt me, maar dat begreep ik niet.",
+        message: "Sorry, maar dat begreep ik niet.",
         type: "text"
       });
       responses.push({
-        message: "Probeer iets anders te vragen.",
+        message: "Ik wil U graag verder helpen, probeer het op een andere manier te vragen.",
         type: "text"
       });
     }
@@ -437,7 +434,7 @@ function sendResponses(conversationId, responses, meta, userCount, sentResponses
   let timeWait = 1000;
   if (sentResponses.length > 0 && sentResponses[sentResponses.length - 1].type === "text") {
     const tokenizer = new natural.WordTokenizer();
-    timeWait = (tokenizer.tokenize(sentResponses[sentResponses.length - 1].message.replace(/<.*?>/g, "")).length / 220) * 60000; // 220 wpm
+    timeWait = (tokenizer.tokenize(sentResponses[sentResponses.length - 1].message.replace(/<.*?>/g, "")).length / 200) * 60000; // 200 wpm
   }
 
   // Move response to sent array
@@ -480,5 +477,5 @@ function sentenceSimilarity(a, b) {
   console.log([a, b]);
   console.log(similarity);
 
-  return (similarity.score + similarity.exact + similarity.order) * Math.min(a.length / b.length, 1);
+  return similarity.score * similarity.order * similarity.size;
 }

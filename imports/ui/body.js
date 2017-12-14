@@ -25,20 +25,8 @@ function startConversation(characterName) {
     handlingUserMessage: 0
   });
   Session.set("ConversationId", getId);
-
-  let timeName = "";
-  const hours = new Date().getHours();
-  if (hours >= 19 && hours < 23) {
-    timeName = "Goedenavond";
-  } else if (hours >= 23 || hours < 7) {
-    timeName = "Goedenacht";
-  } else if (hours >= 7 && hours < 12) {
-    timeName = "Goedemorgen";
-  } else if (hours >= 12 && hours < 19) {
-    timeName = "Goedemiddag";
-  }
   Meteor.setTimeout(() => {
-    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), timeName + ", hoe kan ik u helpen?", "text", false);
+    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), currentTimeGreeting() + ", ik ben Uw virtuele assistent " + characterName + ". Hoe kan ik u helpen?", "text", false);
   }, 1000);
 }
 

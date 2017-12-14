@@ -131,6 +131,7 @@ body {
   border: 1px solid $achtergrondkleuren-uwv-grijs;
   width: 80%;
   overflow: hidden;
+  font-size: 14px;
 
   video {
     margin: (-1 * $padding-in-message + 4px) (-1 * $padding-in-message) (-2 * $padding-in-message + 7px);
