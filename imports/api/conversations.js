@@ -197,7 +197,7 @@ function sendBotMessages(conversationId, messages, userCount, startTime, sentMes
   let timeWait = 1000;
   if (!sentMessages.empty() && sentMessages[sentMessages.length - 1].type === "text") {
     const tokenizer = new natural.WordTokenizer();
-    timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / 200) * 60000; // 200 wpm
+    timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / 160) * 60000; // 160 wpm
   } else {
     timeWait -= startTimeNew - startTime;
     timeWait = Math.max(timeWait, 0);
