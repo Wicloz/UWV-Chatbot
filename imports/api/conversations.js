@@ -3,9 +3,12 @@ import { Messages } from "./messages";
 
 let natural;
 let ss;
+let spellChecker;
 if (Meteor.isServer) {
   natural = require('natural');
   ss = require('sentence-similarity');
+  spellChecker = require('spellchecker');
+  spellChecker.setDictionary('nl_NL', spellChecker.getDictionaryPath());
 }
 
 // Collection
@@ -104,7 +107,7 @@ Meteor.methods({
     if (sentenceSimilarityMultiple(userMessage, [
         "bedankt",
         "dank"
-      ]) > 0.5) {
+      ]) > 0.4) {
       responses.push({
         message: "Graag gedaan.",
         type: "text"
@@ -115,12 +118,14 @@ Meteor.methods({
         "hallo",
         "groeten",
         "hi",
+        "hoi",
+        "hai",
         "goedenavond",
         "goedenacht",
         "goedemiddag",
         "goedemorgen",
-        "goedenochtend"
-      ]) > 0.5) {
+        "goeden ochtend"
+      ]) > 0.4) {
       responses.push({
         message: currentTimeGreeting() + ".",
         type: "text"
@@ -129,8 +134,9 @@ Meteor.methods({
     }
     if (sentenceSimilarityMultiple(userMessage, [
         "Ik heb hulp nodig.",
-        "help"
-      ]) > 0.5) {
+        "help",
+        "Ik wil een vraag stellen."
+      ]) > 0.4) {
       responses.push({
         message: "Stel een vraag en ik zal mijn best doen hem te beantwoorden.",
         type: "text"
@@ -139,8 +145,9 @@ Meteor.methods({
     }
     if (sentenceSimilarityMultiple(userMessage, [
         "Ik ben voldoende geholpen.",
-        "Die heb ik niet."
-      ]) > 0.5) {
+        "Die heb ik niet.",
+        "Ik heb verder geen vragen meer."
+      ]) > 0.4) {
       responses.push({
         message: "Hopelijk heb ik U hiermee voldoende kunnen informeren.",
         type: "text"
@@ -467,15 +474,34 @@ function sentenceSimilarityMultiple(a, b=[]) {
 }
 
 function sentenceSimilarity(a, b) {
-  const tokenizer = new natural.WordTokenizer();
-
-  a = tokenizer.tokenize(a.toLowerCase());
-  b = tokenizer.tokenize(b.toLowerCase());
+  a = splitAndCorrectSentence(a);
+  b = splitAndCorrectSentence(b);
 
   let similarity = ss.sentenceSimilarity(a, b, { f: ss.similarityScore.winklerMetaphone, options : {threshold: 0} });
+  let score = similarity.exact * similarity.order * similarity.size * ((-1 / ((a.length / 2) + 1)) + 1);
 
-  console.log([a, b]);
-  console.log(similarity);
+  console.log([a, b, score]);
 
-  return similarity.score * similarity.order * similarity.size;
+  return score;
+}
+
+function splitAndCorrectSentence(sentence) {
+  const tokenizer = new natural.WordTokenizer();
+
+  sentence = tokenizer.tokenize(sentence.toLowerCase());
+  let oldSentence = "";
+
+  while (sentence.join(" ") !== oldSentence) {
+    oldSentence = sentence.join(" ");
+    sentence = sentence.map((value) => {
+      if (spellChecker.isMisspelled(value)) {
+        let correction = spellChecker.getCorrectionsForMisspelling(value)[0];
+        return correction ? correction : value;
+      }
+      return value;
+    });
+    sentence = tokenizer.tokenize(sentence.join(" "));
+  }
+
+  return sentence;
 }
