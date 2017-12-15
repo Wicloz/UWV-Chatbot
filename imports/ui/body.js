@@ -22,7 +22,8 @@ function startConversation(characterName) {
     characterName: characterName,
     botTalking: true,
     userTalking: false,
-    handlingUserMessage: 0
+    handlingUserMessage: 0,
+    annoyedFactor: 0
   });
   Session.set("ConversationId", getId);
   Meteor.call("conversations.sendBotGreeting", Session.get("ConversationId"));
@@ -97,11 +98,11 @@ Template.body.events({
     Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"), false);
 
     // Send user message
-    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), text, "text", Session.get("IsUser"));
+    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), text, "text", Session.get("IsUser"), []);
 
     // Handle bot message
     if (conversation().withBot) {
-      Meteor.call("conversations.botResponse", Session.get("ConversationId"), text);
+      Meteor.call("conversations.botResponse", Session.get("ConversationId"));
     } else {
       Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), false, false);
     }
