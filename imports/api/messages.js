@@ -35,13 +35,13 @@ Messages.attachSchema(Schemas.Message);
 
 // Helpers
 Messages.helpers({
-  isText: function () {
+  isText: function() {
     return this.contentType === "text";
   },
-  isVideo: function () {
+  isVideo: function() {
     return this.contentType === "video";
   },
-  isIframe: function () {
+  isIframe: function() {
     return this.contentType === "iframe";
-  }
+  },
 });

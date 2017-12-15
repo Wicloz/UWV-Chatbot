@@ -9,6 +9,9 @@ if (Meteor.isServer) {
   ss = require('sentence-similarity');
   spellChecker = require('spellchecker');
   spellChecker.setDictionary('nl_NL', spellChecker.getDictionaryPath());
+  extraDictionaryWords.forEach((value) => {
+    spellChecker.add(value);
+  });
 }
 
 // Collection
@@ -42,9 +45,20 @@ Conversations.attachSchema(Schemas.Conversation);
 
 // Helpers
 Conversations.helpers({
-  getLastMessage: function () {
+  getLastUserMessage: function() {
     return Messages.findOne({
-      conversationId: this._id
+      conversationId: this._id,
+      fromUser: true
+    }, {
+      sort: {
+        timeSent: -1
+      }
+    });
+  },
+  getLastBotMessage: function() {
+    return Messages.findOne({
+      conversationId: this._id,
+      fromUser: false
     }, {
       sort: {
         timeSent: -1
@@ -164,14 +178,39 @@ Meteor.methods({
 
     else {
       // Determine response based on previous messages
+      let askMore = false;
+
       conversationDefinition.forEach((value) => {
-        if (conversation.getLastMessage().contentMeta.includes(value.meta)) {
-          responses = responses.concat(value.response.map((response) => {
-            response.meta = value.meta;
-            return response;
-          }));
+        if (conversation.getLastUserMessage().contentMeta.includes(value.meta)) {
+          value.response.forEach((response) => {
+            if (response.type === "trigger" && conversation.getLastBotMessage().contentMeta.includes(response.meta)) {
+              let contentMetaNew = Messages.findOne({_id: conversation.getLastUserMessage()._id}).contentMeta;
+              contentMetaNew.push(response.message);
+              Messages.update(conversation.getLastUserMessage()._id, {
+                $set: {
+                  contentMeta: contentMetaNew
+                }
+              });
+            }
+          });
         }
       });
+
+      conversationDefinition.forEach((value) => {
+        if (conversation.getLastUserMessage().contentMeta.includes(value.meta)) {
+          value.response.forEach((response) => {
+            if (response.type !== "trigger") {
+              askMore = askMore || value.askMore;
+              response.meta = value.meta;
+              responses.push(response);
+            }
+          });
+        }
+      });
+
+      if (askMore) {
+        responses = responses.concat(conversationMore);
+      }
     }
 
     // Set response if nothing was found
@@ -224,7 +263,7 @@ function sendBotMessages(conversationId, messages, userCount, startTime, sentMes
 function determineUserMessageMeta(userMessage, rules) {
   let rulesScored = rules.map((value) => {
     let score = sentenceSimilarityMultiple(userMessage, value.matching);
-    if (score > 0.3) {
+    if (score > 0.2) {
       return {
         meta: value.meta,
         exclusive: value.exclusive,
@@ -267,7 +306,7 @@ function sentenceSimilarity(a, b) {
   b = splitAndCorrectSentence(b);
 
   let similarity = ss.sentenceSimilarity(a, b, { f: ss.similarityScore.winklerMetaphone, options : {threshold: 0} });
-  let score = similarity.exact * similarity.order * similarity.size * ((-1 / ((a.length / 2) + 1)) + 1);
+  let score = similarity.exact * similarity.order * similarity.size * ((-1 / ((a.length / 1) + 1)) + 1) * ((-1 / ((b.length / 1) + 1)) + 1);
 
   console.log([a, b, score]);
 
