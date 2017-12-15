@@ -17,9 +17,11 @@ Schemas.Message = new SimpleSchema({
     type: String,
     allowedValues: ["text", "video", "iframe"]
   },
-  contentBotMeta: {
-    type: String,
-    required: false
+  contentMeta: {
+    type: Array
+  },
+  'contentMeta.$': {
+    type: String
   },
   fromUser: {
     type: Boolean
