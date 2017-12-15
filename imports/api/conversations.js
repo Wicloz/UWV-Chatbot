@@ -44,14 +44,6 @@ Conversations.helpers({
 
 // Methods
 Meteor.methods({
-  'conversations.incrementUserCount'(conversationId) {
-    Conversations.update(conversationId, {
-      $set: {
-        handlingUserMessage: Conversations.findOne({_id: conversationId}).handlingUserMessage + 1
-      }
-    });
-  },
-
   'conversations.sendMessage'(conversationId, message, type, forUser, contentBotMeta="", newTalkingState=false) {
     Meteor.call("conversations.updateTalkingState", conversationId, forUser, newTalkingState);
     Messages.insert({
@@ -62,6 +54,14 @@ Meteor.methods({
       fromUser: forUser,
       timeSent: new Date()
     });
+
+    if (forUser) {
+      Conversations.update(conversationId, {
+        $set: {
+          handlingUserMessage: Conversations.findOne({_id: conversationId}).handlingUserMessage + 1
+        }
+      });
+    }
   },
 
   'conversations.updateBotState'(conversationId, to) {
@@ -88,7 +88,7 @@ Meteor.methods({
     }
   },
 
-  'conversations.sendGreeting'(conversationId) {
+  'conversations.sendBotGreeting'(conversationId) {
     // Set talking state
     Meteor.call("conversations.updateTalkingState", conversationId, false, true);
 
@@ -119,7 +119,7 @@ Meteor.methods({
       return;
     }
 
-    // Prepare responses
+    // Prepare variables
     let startTime = (new Date()).getTime();
     let responses = [];
     let meta = "unknown";
@@ -435,8 +435,8 @@ Meteor.methods({
       });
     }
 
-    // Set response if no possibility was found and no flag was set
-    else if (!responded) {
+    // Set response if no possibility was found
+    else if (responses.empty()) {
       responses.push({
         message: "Sorry, maar dat begreep ik niet.",
         type: "text"
@@ -455,7 +455,7 @@ Meteor.methods({
 // Functions
 function sendMessages(conversationId, messages, userCount, startTime, sentMessages=[]) {
   // Stop if done
-  if (messages.length <= 0) {
+  if (messages.empty()) {
     Meteor.call("conversations.updateTalkingState", conversationId, false, false);
     return;
   }
@@ -463,7 +463,7 @@ function sendMessages(conversationId, messages, userCount, startTime, sentMessag
   // Determine wait time
   let startTimeNew = (new Date()).getTime();
   let timeWait = 1000;
-  if (sentMessages.length > 0 && sentMessages[sentMessages.length - 1].type === "text") {
+  if (!sentMessages.empty() && sentMessages[sentMessages.length - 1].type === "text") {
     const tokenizer = new natural.WordTokenizer();
     timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / 200) * 60000; // 200 wpm
   } else {

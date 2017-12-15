@@ -25,7 +25,7 @@ function startConversation(characterName) {
     handlingUserMessage: 0
   });
   Session.set("ConversationId", getId);
-  Meteor.call("conversations.sendGreeting", Session.get("ConversationId"));
+  Meteor.call("conversations.sendBotGreeting", Session.get("ConversationId"));
 }
 
 // On Created
@@ -99,7 +99,6 @@ Template.body.events({
 
     // Send user message
     Meteor.call("conversations.sendMessage", Session.get("ConversationId"), text, "text", Session.get("IsUser"));
-    Meteor.call("conversations.incrementUserCount", Session.get("ConversationId"));
 
     // Handle bot message
     if (conversation().withBot) {
