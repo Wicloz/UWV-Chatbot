@@ -88,6 +88,28 @@ Meteor.methods({
     }
   },
 
+  'conversations.sendGreeting'(conversationId) {
+    // Set talking state
+    Meteor.call("conversations.updateTalkingState", conversationId, false, true);
+
+    // Stop on client
+    if (!Meteor.isServer) {
+      return;
+    }
+
+    // Get variables
+    let startTime = (new Date()).getTime();
+    let userCount = Conversations.findOne({_id: conversationId}).handlingUserMessage;
+    let characterName = Conversations.findOne({_id: conversationId}).characterName;
+
+    // Send message
+    sendMessages(conversationId, [{
+      message: currentTimeGreeting() + ", ik ben Uw virtuele assistent " + characterName + ". Hoe kan ik u helpen?",
+      type: "text",
+      meta: "greeting"
+    }], userCount, startTime);
+  },
+
   'conversations.botResponse'(conversationId, userMessage) {
     // Set talking state
     Meteor.call("conversations.updateTalkingState", conversationId, false, true);
@@ -98,6 +120,7 @@ Meteor.methods({
     }
 
     // Prepare responses
+    let startTime = (new Date()).getTime();
     let responses = [];
     let meta = "unknown";
     let userCount = Conversations.findOne({_id: conversationId}).handlingUserMessage;
@@ -107,7 +130,7 @@ Meteor.methods({
     if (sentenceSimilarityMultiple(userMessage, [
         "bedankt",
         "dank"
-      ]) > 0.4) {
+      ]) > 0.3) {
       responses.push({
         message: "Graag gedaan.",
         type: "text"
@@ -125,7 +148,7 @@ Meteor.methods({
         "goedemiddag",
         "goedemorgen",
         "goeden ochtend"
-      ]) > 0.4) {
+      ]) > 0.3) {
       responses.push({
         message: currentTimeGreeting() + ".",
         type: "text"
@@ -136,7 +159,7 @@ Meteor.methods({
         "Ik heb hulp nodig.",
         "help",
         "Ik wil een vraag stellen."
-      ]) > 0.4) {
+      ]) > 0.3) {
       responses.push({
         message: "Stel een vraag en ik zal mijn best doen hem te beantwoorden.",
         type: "text"
@@ -147,7 +170,7 @@ Meteor.methods({
         "Ik ben voldoende geholpen.",
         "Die heb ik niet.",
         "Ik heb verder geen vragen meer."
-      ]) > 0.4) {
+      ]) > 0.3) {
       responses.push({
         message: "Hopelijk heb ik U hiermee voldoende kunnen informeren.",
         type: "text"
@@ -201,7 +224,7 @@ Meteor.methods({
     console.log(possibilities);
 
     // Set responses for the best possibility
-    if (possibilities[0][1] > 0.2) {
+    if (possibilities[0][1] > 0.3) {
       meta = possibilities[0][0];
       switch (meta) {
 
@@ -425,29 +448,33 @@ Meteor.methods({
     }
 
     // Send responses
-    sendResponses(conversationId, responses, meta, userCount);
+    sendMessages(conversationId, responses, userCount, startTime);
   }
 });
 
 // Functions
-function sendResponses(conversationId, responses, meta, userCount, sentResponses=[]) {
+function sendMessages(conversationId, messages, userCount, startTime, sentMessages=[]) {
   // Stop if done
-  if (responses.length <= 0) {
+  if (messages.length <= 0) {
     Meteor.call("conversations.updateTalkingState", conversationId, false, false);
     return;
   }
 
   // Determine wait time
+  let startTimeNew = (new Date()).getTime();
   let timeWait = 1000;
-  if (sentResponses.length > 0 && sentResponses[sentResponses.length - 1].type === "text") {
+  if (sentMessages.length > 0 && sentMessages[sentMessages.length - 1].type === "text") {
     const tokenizer = new natural.WordTokenizer();
-    timeWait = (tokenizer.tokenize(sentResponses[sentResponses.length - 1].message.replace(/<.*?>/g, "")).length / 200) * 60000; // 200 wpm
+    timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / 200) * 60000; // 200 wpm
+  } else {
+    timeWait -= startTimeNew - startTime;
+    timeWait = Math.max(timeWait, 0);
   }
 
   // Move response to sent array
-  let response = responses[0];
-  responses.splice(0, 1);
-  sentResponses.push(response);
+  let response = messages[0];
+  messages.splice(0, 1);
+  sentMessages.push(response);
 
   // Wait
   Meteor.setTimeout(() => {
@@ -457,20 +484,15 @@ function sendResponses(conversationId, responses, meta, userCount, sentResponses
     }
 
     // Send response and call function again
-    Meteor.call("conversations.sendMessage", conversationId, response.message, response.type, false, meta, true);
-    sendResponses(conversationId, responses, meta, userCount, sentResponses);
+    Meteor.call("conversations.sendMessage", conversationId, response.message, response.type, false, response.meta, true);
+    sendMessages(conversationId, messages, userCount, startTimeNew, sentMessages);
   }, timeWait);
 }
 
 function sentenceSimilarityMultiple(a, b=[]) {
-  let results = [];
-  b.forEach((value) => {
-    results.push(sentenceSimilarity(a, value));
-  });
-  results.sort((first, second) => {
-    return second - first;
-  });
-  return results[0];
+  return b.map((value) => {
+    return sentenceSimilarity(a, value);
+  }).max();
 }
 
 function sentenceSimilarity(a, b) {
@@ -489,10 +511,11 @@ function splitAndCorrectSentence(sentence) {
   const tokenizer = new natural.WordTokenizer();
 
   sentence = tokenizer.tokenize(sentence.toLowerCase());
-  let oldSentence = "";
+  let oldSentence = [];
 
-  while (sentence.join(" ") !== oldSentence) {
-    oldSentence = sentence.join(" ");
+  while (!sentence.equals(oldSentence)) {
+    oldSentence = sentence;
+
     sentence = sentence.map((value) => {
       if (spellChecker.isMisspelled(value)) {
         let correction = spellChecker.getCorrectionsForMisspelling(value)[0];

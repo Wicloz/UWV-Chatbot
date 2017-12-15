@@ -25,16 +25,15 @@ function startConversation(characterName) {
     handlingUserMessage: 0
   });
   Session.set("ConversationId", getId);
-  Meteor.setTimeout(() => {
-    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), currentTimeGreeting() + ", ik ben Uw virtuele assistent " + characterName + ". Hoe kan ik u helpen?", "text", false);
-  }, 1000);
+  Meteor.call("conversations.sendGreeting", Session.get("ConversationId"));
 }
 
 // On Created
 Template.body.onCreated(function() {
   Session.set("IsUser", true);
-  Session.set("ChatActive", false);
+  Session.set("ChatActive", true);
   Session.set("ConversationId", false);
+  startConversation("Alex");
 });
 
 // Helpers
