@@ -226,13 +226,25 @@ function sendBotMessages(conversationId, messages, userCount, startTime, sentMes
   // Determine wait time
   let startTimeNew = (new Date()).getTime();
   let timeWait = 1000;
-  if (!sentMessages.empty() && sentMessages[sentMessages.length - 1].type === "text") {
-    const tokenizer = new natural.WordTokenizer();
-    timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / 160) * 60000; // 160 wpm
-  } else {
-    timeWait -= startTimeNew - startTime;
-    timeWait = Math.max(timeWait, 0);
+
+  if (!sentMessages.empty()) {
+    switch (sentMessages[sentMessages.length - 1].type) {
+      case "text":
+        const tokenizer = new natural.WordTokenizer();
+        timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / 150) * 60000; // 150 wpm
+        break;
+      case "video":
+        timeWait = 6000;
+        break;
+    }
+
+    if (messages[0].meta.includes("verder")) {
+      timeWait *= 2;
+    }
   }
+
+  timeWait -= startTimeNew - startTime;
+  timeWait = Math.max(timeWait, 0);
 
   // Move response to sent array
   let message = messages[0];
@@ -248,7 +260,7 @@ function sendBotMessages(conversationId, messages, userCount, startTime, sentMes
 
     // Send response and call function again
     Meteor.call("conversations.sendMessage", conversationId, message.message, message.type, false, message.meta, true);
-    sendBotMessages(conversationId, messages, userCount, startTimeNew, sentMessages);
+    sendBotMessages(conversationId, messages, userCount, startTimeNew + timeWait, sentMessages);
   }, timeWait);
 }
 
