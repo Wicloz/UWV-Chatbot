@@ -238,6 +238,9 @@ function sendBotMessages(conversationId, messages, userCount, startTime, sentMes
       case "video":
         timeWait = 6000;
         break;
+      case "iframe":
+        timeWait = 3000;
+        break;
     }
 
     if (messages[0].meta.includes("verder")) {
