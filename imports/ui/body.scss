@@ -13,13 +13,15 @@ body {
 }
 
 .chat-area-full {
+  height: 100%;
   @include media-breakpoint-up(md) {
     margin: $spacer $spacer*2 $spacer 70%;
+    height: auto;
   }
 
   .chat-area-characters {
     background-color: $hoofdkleuren-uwv-blauw;
-    height: 100vh;
+    height: 100%;
     color: $hoofdkleuren-uwv-wit;
     text-align: center;
     padding-top: $spacer;
@@ -27,7 +29,7 @@ body {
       border: 1px solid $hoofdkleuren-uwv-blauw;
       border-radius: 8px;
       overflow: hidden;
-      height: calc(70vh + 2px);
+      height: 70vh;
     }
 
     .btn-character {
@@ -53,14 +55,14 @@ body {
   .chat-area-chat {
     background-color: $achtergrondkleuren-uwv-lichtblauw;
     padding: 0;
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-flow: column;
     @include media-breakpoint-up(md) {
       border: 1px solid $hoofdkleuren-uwv-blauw;
       border-radius: 8px;
       overflow: hidden;
-      height: calc(70vh + 2px);
+      height: 70vh;
     }
 
     .chat-area-header {
