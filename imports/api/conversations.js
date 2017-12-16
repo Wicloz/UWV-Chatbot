@@ -70,6 +70,8 @@ Conversations.helpers({
 // Methods
 Meteor.methods({
   'conversations.sendMessage'(conversationId, message, type, forUser, contentMeta, newTalkingState=false) {
+    let currentTime = new Date();
+
     if (forUser) {
       if (Meteor.isServer) {
         contentMeta = determineUserMessageMeta(message, conversationDefinition);
@@ -99,7 +101,7 @@ Meteor.methods({
       contentType: type,
       contentMeta: contentMeta,
       fromUser: forUser,
-      timeSent: new Date()
+      timeSent: currentTime
     });
   },
 
@@ -141,7 +143,7 @@ Meteor.methods({
     let conversation = Conversations.findOne({_id: conversationId});
 
     // Send message
-    sendBotMessages(conversationId, [conversationGreeting(conversation.characterName)], conversation.handlingUserMessage, startTime);
+    sendBotMessages(conversationId, [conversationGreeting], conversation.handlingUserMessage, startTime);
   },
 
   'conversations.botResponse'(conversationId) {
@@ -154,8 +156,8 @@ Meteor.methods({
     }
 
     // Prepare variables
-    let startTime = (new Date()).getTime();
     let conversation = Conversations.findOne({_id: conversationId});
+    let startTime = conversation.getLastUserMessage().timeSent.getTime();
     let responses = [];
 
     // Determine if user wants a redirect
@@ -259,12 +261,19 @@ function sendBotMessages(conversationId, messages, userCount, startTime, sentMes
     }
 
     // Send response and call function again
-    Meteor.call("conversations.sendMessage", conversationId, message.message, message.type, false, message.meta, true);
+    Meteor.call("conversations.sendMessage", conversationId, processBotMessage(message.message, conversationId), message.type, false, message.meta, true);
     sendBotMessages(conversationId, messages, userCount, startTimeNew + timeWait, sentMessages);
   }, timeWait);
 }
 
+function processBotMessage(message, conversationId) {
+  let conversation = Conversations.findOne({_id: conversationId});
+  return message.replace("%currentTimeGreeting%", currentTimeGreeting).replace("%characterName%", conversation.characterName);
+}
+
 function determineUserMessageMeta(userMessage, rules) {
+  userMessage = splitAndCorrectSentence(userMessage);
+
   let rulesScored = rules.map((value) => {
     let score = sentenceSimilarityMultiple(userMessage, value.matching);
     if (score > 0.2) {
@@ -301,21 +310,19 @@ function determineUserMessageMeta(userMessage, rules) {
   });
 }
 
-function sentenceSimilarityMultiple(a, b=[]) {
-  return b.map((value) => {
-    return sentenceSimilarity(a, value);
+function sentenceSimilarityMultiple(userMessagePrepared, matching=[]) {
+  return matching.map((value) => {
+    return sentenceSimilarity(userMessagePrepared, value);
   }).max();
 }
 
-function sentenceSimilarity(a, b) {
-  a = splitAndCorrectSentence(a);
-  b = splitAndCorrectSentence(b);
-
-  let similarity = ss.sentenceSimilarity(a, b, { f: ss.similarityScore.winklerMetaphone, options : {threshold: 0} });
-  let score = similarity.exact * similarity.order * similarity.size * ((-1 / ((a.length / 1) + 1)) + 1) * ((-1 / ((b.length / 1) + 1)) + 1);
+function sentenceSimilarity(userMessagePrepared, matching) {
+  matching = splitAndCorrectSentence(matching);
+  let similarity = ss.sentenceSimilarity(userMessagePrepared, matching, { f: ss.similarityScore.winklerMetaphone, options : {threshold: 0} });
+  let score = similarity.exact * similarity.order * similarity.size * ((-1 / ((userMessagePrepared.length / 1) + 1)) + 1) * ((-1 / ((matching.length / 1) + 1)) + 1);
 
   if (Meteor.isDevelopment) {
-    console.log([a, b, score]);
+    console.log([userMessagePrepared, matching, score]);
   }
 
   return score;
