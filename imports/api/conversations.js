@@ -266,7 +266,9 @@ function determineUserMessageMeta(userMessage, rules) {
     return value;
   });
 
-  console.log(rulesScored);
+  if (Meteor.isDevelopment) {
+    console.log(rulesScored);
+  }
 
   let metaExclusive = rulesScored.filter((value) => {
     return value.exclusive;
@@ -300,7 +302,9 @@ function sentenceSimilarity(a, b) {
   let similarity = ss.sentenceSimilarity(a, b, { f: ss.similarityScore.winklerMetaphone, options : {threshold: 0} });
   let score = similarity.exact * similarity.order * similarity.size * ((-1 / ((a.length / 1) + 1)) + 1) * ((-1 / ((b.length / 1) + 1)) + 1);
 
-  console.log([a, b, score]);
+  if (Meteor.isDevelopment) {
+    console.log([a, b, score]);
+  }
 
   return score;
 }
