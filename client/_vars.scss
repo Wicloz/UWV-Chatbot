@@ -17,6 +17,12 @@ $achtergrondkleuren-uwv-zakelijk: #D5F1C9 !default;
 
 // Bootstrap Colors
 $btn-primary-bg: $hoofdkleuren-uwv-blauw !default;
+$btn-danger-bg: #cd0134 !default;
+$btn-danger-border: darken($btn-danger-bg, 8) !default;
+$btn-danger-color: $hoofdkleuren-uwv-wit !default;
+$btn-success-bg: #96bd32 !default;
+$btn-success-border: darken($btn-success-bg, 8) !default;
+$btn-success-color: $textkleuren-uwv-primair !default;
 
 // Others
 $padding-in-message: 12px !default;

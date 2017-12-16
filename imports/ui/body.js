@@ -61,6 +61,10 @@ Template.body.helpers({
   },
   charactersOpen() {
     return Session.get("ChatActive") && !conversation();
+  },
+  duringWorkHours() {
+    let date = new Date();
+    return date.getDay() >= 1 && date.getDay() <= 5 && date.getHours() >= 8 && date.getHours() < 17;
   }
 });
 

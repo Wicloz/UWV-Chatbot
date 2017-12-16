@@ -99,19 +99,24 @@ body {
       border: 1px solid $achtergrondkleuren-uwv-grijs;
       flex: 0 0 auto;
 
-      a {
-        color: darken($hoofdkleuren-uwv-wit, 20);
-        text-decoration: underline;
-      }
-      a:hover {
-        text-decoration: none;
-      }
-
       .row {
         margin-bottom: $spacer;
       }
       .row:last-of-type {
         margin-bottom: 0;
+      }
+
+      .btn:not(.btn-unannoy) {
+        white-space: normal;
+        width: 100%;
+      }
+
+      a:not(.btn) {
+        color: darken($hoofdkleuren-uwv-wit, 20);
+        text-decoration: underline;
+      }
+      a:not(.btn):hover {
+        text-decoration: none;
       }
 
       .btn-unannoy {

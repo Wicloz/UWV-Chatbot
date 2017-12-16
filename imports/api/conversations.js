@@ -229,7 +229,7 @@ function sendBotMessages(conversationId, messages, userCount, startTime, sentMes
     switch (sentMessages[sentMessages.length - 1].type) {
       case "text":
         const tokenizer = new natural.WordTokenizer();
-        timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / 150) * 60000; // 150 wpm
+        timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / 160) * 60000; // 160 wpm
         break;
       case "video":
         timeWait = 6000;
