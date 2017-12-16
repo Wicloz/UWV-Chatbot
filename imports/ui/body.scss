@@ -52,16 +52,20 @@ body {
   .chat-area-chat {
     background-color: $achtergrondkleuren-uwv-lichtblauw;
     padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-flow: column;
     @include media-breakpoint-up(md) {
       border: 1px solid $hoofdkleuren-uwv-blauw;
       border-radius: 8px;
       overflow: hidden;
+      height: calc(60vh + 2px);
     }
 
     .chat-area-header {
       color: $hoofdkleuren-uwv-wit;
       background-color: $hoofdkleuren-uwv-blauw;
-      height: 60px;
+      flex: 0 0 60px;
       text-align: center;
 
       .chat-header-image {
@@ -86,18 +90,51 @@ body {
       }
     }
 
+    .chat-area-redirect {
+      color: $hoofdkleuren-uwv-wit;
+      background-color: $hoofdkleuren-uwv-blauw;
+      font-size: 14px;
+      padding: $spacer;
+      border: 1px solid $achtergrondkleuren-uwv-grijs;
+      flex: 0 0 auto;
+
+      a {
+        color: darken($hoofdkleuren-uwv-wit, 20);
+        text-decoration: underline;
+      }
+      a:hover {
+        text-decoration: none;
+      }
+
+      .row {
+        margin-bottom: $spacer;
+      }
+      .row:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .btn-unannoy {
+        color: inherit;
+        font-size: 22px;
+        background: none;
+      }
+    }
+
     .chat-area-messages {
       padding: $spacer $spacer 0;
       overflow: auto;
-      width: 100%;
+      flex: 1 1 auto;
       margin-bottom: 0;
-      height: calc(100vh - 60px - 54px);
-      @include media-breakpoint-up(md) {
-        height: calc(60vh - 60px - 54px);
+
+      li:last-of-type {
+        p {
+          margin-bottom: $spacer/2;
+        }
       }
     }
 
     .chat-area-form {
+      flex: 0 0 auto;
       padding: $spacer/2;
     }
   }
@@ -161,7 +198,7 @@ body {
 }
 
 .chat-message-talking {
-  font-size: 24px;
+  font-size: 22px;
   padding: ($padding-in-message - 10px) $padding-in-message ($padding-in-message - 8px);
   width: auto;
 }

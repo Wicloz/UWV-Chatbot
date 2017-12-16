@@ -52,6 +52,36 @@
         </div>
       </div>
 
+      <div class="chat-area-redirect row {{#unless userAnnoyed}}hidden{{/unless}}">
+        <div class="col-10">
+          <div class="row">
+            <div class="col">
+              Het lijkt erop dat de chatbot niet in staat is u goed te helpen.
+              <br>
+              Wij willen u toch graag verder van dienst zijn.
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              U kunt telefonish contact met ons opnemen via '0900 - 92 94'.
+              <br>
+              <a target="uwvFrame" class="btn-close" href="https://www.uwv.nl/particulieren/klantenservice/contact/detail/telefoon">Zie hier voor meer informatie.</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              U kunt ons ook berijken via Mijn Berichten op Mijn UWV.
+              <br>
+              <a target="uwvFrame" class="btn-close" href="https://www.uwv.nl/particulieren/klantenservice/contact/detail/mijn-berichten">Zie hier voor meer informatie.</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-1">
+          <button class="btn btn-unannoy">✕</button>
+        </div>
+      </div>
+
       <ul class="list-unstyled chat-area-messages">
         {{#each message in messages}}
           <li>

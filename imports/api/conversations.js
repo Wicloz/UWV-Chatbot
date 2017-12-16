@@ -105,6 +105,14 @@ Meteor.methods({
     });
   },
 
+  'conversations.resetAnnoyedFactor'(conversationId) {
+    Conversations.update(conversationId, {
+      $set: {
+        annoyedFactor: 0
+      }
+    });
+  },
+
   'conversations.updateBotState'(conversationId, to) {
     Conversations.update(conversationId, {
       $set: {
@@ -160,51 +168,39 @@ Meteor.methods({
     let startTime = conversation.getLastUserMessage().timeSent.getTime();
     let responses = [];
 
-    // Determine if user wants a redirect
-    if (conversation.annoyedFactor >= 3) {
-      responses = responses.concat(conversationRedirect);
-      Conversations.update(conversationId, {
-        $set: {
-          annoyedFactor: 0
-        }
-      });
-    }
+    // Determine response based on previous messages
+    let askMore = false;
 
-    else {
-      // Determine response based on previous messages
-      let askMore = false;
-
-      conversationDefinition.forEach((value) => {
-        if (conversation.getLastUserMessage().contentMeta.includes(value.meta)) {
-          value.response.forEach((response) => {
-            if (response.type === "trigger" && conversation.getLastBotMessage().contentMeta.includes(response.from)) {
-              let contentMetaNew = Messages.findOne({_id: conversation.getLastUserMessage()._id}).contentMeta;
-              contentMetaNew.push(response.to);
-              Messages.update(conversation.getLastUserMessage()._id, {
-                $set: {
-                  contentMeta: contentMetaNew
-                }
-              });
-            }
-          });
-        }
-      });
-
-      conversationDefinition.forEach((value) => {
-        if (conversation.getLastUserMessage().contentMeta.includes(value.meta)) {
-          value.response.forEach((response) => {
-            if (response.type !== "trigger") {
-              askMore = askMore || value.askMore;
-              response.meta = value.meta;
-              responses.push(response);
-            }
-          });
-        }
-      });
-
-      if (askMore) {
-        responses = responses.concat(conversationMore);
+    conversationDefinition.forEach((value) => {
+      if (conversation.getLastUserMessage().contentMeta.includes(value.meta)) {
+        value.response.forEach((response) => {
+          if (response.type === "trigger" && conversation.getLastBotMessage().contentMeta.includes(response.from)) {
+            let contentMetaNew = Messages.findOne({_id: conversation.getLastUserMessage()._id}).contentMeta;
+            contentMetaNew.push(response.to);
+            Messages.update(conversation.getLastUserMessage()._id, {
+              $set: {
+                contentMeta: contentMetaNew
+              }
+            });
+          }
+        });
       }
+    });
+
+    conversationDefinition.forEach((value) => {
+      if (conversation.getLastUserMessage().contentMeta.includes(value.meta)) {
+        value.response.forEach((response) => {
+          if (response.type !== "trigger") {
+            askMore = askMore || value.askMore;
+            response.meta = value.meta;
+            responses.push(response);
+          }
+        });
+      }
+    });
+
+    if (askMore) {
+      responses = responses.concat(conversationMore);
     }
 
     // Set response if nothing was found

@@ -50,6 +50,9 @@ Template.body.helpers({
   conversation() {
     return conversation();
   },
+  userAnnoyed() {
+    return conversation().annoyedFactor >= 3;
+  },
   chatActive() {
     return Session.get("ChatActive");
   },
@@ -164,6 +167,10 @@ Template.body.events({
 
   'click .btn-exit'(event) {
     Session.set("ConversationId", false);
+  },
+
+  'click .btn-unannoy'(event) {
+    Meteor.call("conversations.resetAnnoyedFactor", Session.get("ConversationId"));
   },
 
   'click #btn-character-alex'(event) {
