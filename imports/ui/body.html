@@ -63,12 +63,12 @@
           </div>
           <div class="row">
             <div class="col">
-              <a role="button" class="btn btn-sm {{#if duringWorkHours}}btn-success{{else}}btn-danger{{/if}}" href="#">Klik hier om verbonden te worden met een medewerker.</a>
+              <a role="button" aria-disabled="{{#if duringWorkHours}}false{{else}}true{{/if}}" class="btn btn-sm {{#if duringWorkHours}}btn-success{{else}}btn-danger disabled{{/if}}" href="#">Klik hier om verbonden te worden met een medewerker.</a>
             </div>
           </div>
           <div class="row">
             <div class="col">
-              <a role="button" class="btn btn-sm {{#if duringWorkHours}}btn-success{{else}}btn-danger{{/if}}" href="tel:+3109009294">Klik hier om telefonish contact met ons op te nemen via '0900&nbsp;-&nbsp;92&nbsp;94'.</a>
+              <a role="button" aria-disabled="{{#if duringWorkHours}}false{{else}}true{{/if}}" class="btn btn-sm {{#if duringWorkHours}}btn-success{{else}}btn-danger disabled{{/if}}" href="tel:+3109009294">Klik hier om telefonish contact met ons op te nemen via '0900&nbsp;-&nbsp;92&nbsp;94'.</a>
               <a target="uwvFrame" class="btn-close" href="https://www.uwv.nl/particulieren/klantenservice/contact/detail/telefoon">Zie hier voor meer informatie.</a>
             </div>
           </div>
