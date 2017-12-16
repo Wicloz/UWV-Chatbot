@@ -14,9 +14,6 @@ function fixMessageScroll() {
     let chat = $(".chat-area-messages");
     chat.scrollTop(chat.prop("scrollHeight"));
   });
-  if (conversation().annoyedFactor >= 3) {
-    document.getElementById("message-input").blur();
-  }
 }
 
 function startConversation(characterName) {
@@ -29,6 +26,7 @@ function startConversation(characterName) {
     annoyedFactor: 0
   });
   Session.set("ConversationId", getId);
+  Session.set("AnnoyedRetracted", false);
   Meteor.call("conversations.sendBotGreeting", Session.get("ConversationId"));
 }
 
@@ -85,6 +83,10 @@ Tracker.autorun(function() {
   }).observeChanges({
     added: function(id, fields) {
       fixMessageScroll();
+      if (!Session.get("AnnoyedRetracted") && conversation().annoyedFactor >= 3) {
+        document.getElementById("message-input").blur();
+        Session.set("AnnoyedRetracted", true);
+      }
     }
   });
 });
@@ -121,6 +123,8 @@ Template.body.events({
     target.text.value = "";
     if (conversation().annoyedFactor < 3) {
       target.text.focus();
+    } else {
+      target.text.blur();
     }
   },
 
@@ -180,6 +184,7 @@ Template.body.events({
 
   'click .btn-unannoy'(event) {
     Meteor.call("conversations.resetAnnoyedFactor", Session.get("ConversationId"));
+    Session.set("AnnoyedRetracted", false);
   },
 
   'click #btn-character-alex'(event) {
