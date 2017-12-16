@@ -14,6 +14,9 @@ function fixMessageScroll() {
     let chat = $(".chat-area-messages");
     chat.scrollTop(chat.prop("scrollHeight"));
   });
+  if (conversation().annoyedFactor >= 3) {
+    document.getElementById("message-input").blur();
+  }
 }
 
 function startConversation(characterName) {
@@ -116,7 +119,9 @@ Template.body.events({
 
     // Reset form
     target.text.value = "";
-    target.text.focus();
+    if (conversation().annoyedFactor < 3) {
+      target.text.focus();
+    }
   },
 
   'submit #form-switch-conversation'(event) {
