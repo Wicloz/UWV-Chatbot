@@ -58,7 +58,6 @@
             <p class="chat-message {{#if message.fromUser}}chat-message-user{{else}}chat-message-bot{{/if}}">
               {{#if message.isText}}
                 <span>{{{message.content}}}</span>
-                <span>[{{message.contentMeta}}]</span>
               {{else if message.isVideo}}
                 <video src="{{message.content}}" controls></video>
               {{else if message.isIframe}}
