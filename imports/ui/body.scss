@@ -92,12 +92,12 @@ body {
     }
 
     .chat-area-redirect {
-      color: $hoofdkleuren-uwv-wit;
-      background-color: $hoofdkleuren-uwv-blauw;
+      background-color: $achtergrondkleuren-uwv-grijs;
+      border-bottom: 1px solid $hoofdkleuren-uwv-blauw;
       font-size: 14px;
       padding: $spacer;
-      border: 1px solid $achtergrondkleuren-uwv-grijs;
       flex: 0 0 auto;
+      overflow: auto;
 
       .row {
         margin-bottom: $spacer;
@@ -109,14 +109,11 @@ body {
       .btn:not(.btn-unannoy) {
         white-space: normal;
         width: 100%;
+        background: linear-gradient($gradienten-blauw-boven, $gradienten-blauw-onder);
       }
-
-      a:not(.btn) {
-        color: darken($hoofdkleuren-uwv-wit, 20);
+      .btn:not(.btn-unannoy):hover {
+        background: linear-gradient($gradienten-blauw-onder, $gradienten-blauw-boven);
         text-decoration: underline;
-      }
-      a:not(.btn):hover {
-        text-decoration: none;
       }
 
       .btn-unannoy {

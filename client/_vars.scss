@@ -2,21 +2,26 @@
 @import "../node_modules/bootstrap/scss/_mixins.scss";
 
 // Colors UWV
-$hoofdkleuren-uwv-blauw: #006ACA !default;
-$hoofdkleuren-uwv-groen: #C5D937 !default;
-$hoofdkleuren-uwv-wit: #FFFFFF !default;
-$hoofdkleuren-uwv-zwart: #7C6755 !default;
+$hoofdkleuren-uwv-blauw: #006aca !default;
+$hoofdkleuren-uwv-groen: #c5d937 !default;
+$hoofdkleuren-uwv-wit: #ffffff !default;
+$hoofdkleuren-uwv-zwart: #7c6755 !default;
 $hoofdkleuren-uwv-roos: #db2059 !default;
 
 $textkleuren-uwv-primair: #000000 !default;
 $textkleuren-uwv-secundair: #666666 !default;
 
-$achtergrondkleuren-uwv-lichtblauw: #D6EFFF !default;
-$achtergrondkleuren-uwv-grijs: #EEEEEE !default;
-$achtergrondkleuren-uwv-zakelijk: #D5F1C9 !default;
+$achtergrondkleuren-uwv-lichtblauw: #d6efff !default;
+$achtergrondkleuren-uwv-grijs: #eeeeee !default;
+$achtergrondkleuren-uwv-zakelijk: #d5f1c9 !default;
+
+$gradienten-blauw-boven: #006aca !default;
+$gradienten-blauw-onder: #0058a8 !default;
 
 // Bootstrap Colors
 $btn-primary-bg: $hoofdkleuren-uwv-blauw !default;
+$btn-primary-border: darken($btn-primary-bg, 8) !default;
+$btn-primary-color: $hoofdkleuren-uwv-wit !default;
 $btn-danger-bg: #cd0134 !default;
 $btn-danger-border: darken($btn-danger-bg, 8) !default;
 $btn-danger-color: $hoofdkleuren-uwv-wit !default;
