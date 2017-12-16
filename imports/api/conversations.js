@@ -73,22 +73,14 @@ Meteor.methods({
     if (forUser) {
       if (Meteor.isServer) {
         contentMeta = determineUserMessageMeta(message, conversationDefinition);
+      }
 
-        let annoyedIncrement = 0;
-        if (contentMeta.empty()) {
-          annoyedIncrement = 1;
-        } else {
-          let split = message.split(" ");
-          annoyedIncrement = split.reduce((previous, current) => {
-            if (current.toUpperCase() === current) {
-              return previous + 1;
-            }
-            return previous;
-          }, 0) / split.length;
-        }
+      if ((Meteor.isServer && contentMeta.empty()) || message.split(" ").reduce((previous, current) => {
+          return previous || current === current.toUpperCase();
+        }, false)) {
         Conversations.update(conversationId, {
           $set: {
-            annoyedFactor: Conversations.findOne({_id: conversationId}).annoyedFactor + annoyedIncrement
+            annoyedFactor: Conversations.findOne({_id: conversationId}).annoyedFactor + 1
           }
         });
       }
@@ -167,7 +159,7 @@ Meteor.methods({
     let responses = [];
 
     // Determine if user wants a redirect
-    if (conversation.annoyedFactor > 3) {
+    if (conversation.annoyedFactor >= 3) {
       responses = responses.concat(conversationRedirect);
       Conversations.update(conversationId, {
         $set: {
@@ -183,9 +175,9 @@ Meteor.methods({
       conversationDefinition.forEach((value) => {
         if (conversation.getLastUserMessage().contentMeta.includes(value.meta)) {
           value.response.forEach((response) => {
-            if (response.type === "trigger" && conversation.getLastBotMessage().contentMeta.includes(response.meta)) {
+            if (response.type === "trigger" && conversation.getLastBotMessage().contentMeta.includes(response.from)) {
               let contentMetaNew = Messages.findOne({_id: conversation.getLastUserMessage()._id}).contentMeta;
-              contentMetaNew.push(response.message);
+              contentMetaNew.push(response.to);
               Messages.update(conversation.getLastUserMessage()._id, {
                 $set: {
                   contentMeta: contentMetaNew
