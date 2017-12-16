@@ -2,6 +2,7 @@
 
 body {
   font-family: Verdana, Geneva, sans-serif;
+  color: $textkleuren-uwv-primair;
 }
 
 .iframe-main {
@@ -113,7 +114,7 @@ body {
 
     .chat-oc-button {
       padding: 0;
-      background-color: $uwv-roos;
+      background-color: $hoofdkleuren-uwv-roos;
       color: $hoofdkleuren-uwv-wit;
       border-radius: 50%;
       height: 60px;
@@ -153,7 +154,7 @@ body {
 }
 
 .chat-message-user {
-  background-color: $achtergrondkleuren-uwv-headlines;
+  background-color: $hoofdkleuren-uwv-blauw;
   color: $hoofdkleuren-uwv-wit;
   text-align: right;
   float: right;
