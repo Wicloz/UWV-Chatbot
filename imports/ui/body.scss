@@ -112,9 +112,10 @@ body {
       .btn:not(.btn-unannoy) {
         white-space: normal;
         width: 100%;
+        color: $hoofdkleuren-uwv-wit;
         background: linear-gradient($gradienten-blauw-boven, $gradienten-blauw-onder);
       }
-      .btn:not(.btn-unannoy):hover {
+      .btn:not(.btn-unannoy):hover, .btn:not(.btn-unannoy):active {
         background: linear-gradient($gradienten-blauw-onder, $gradienten-blauw-boven);
         text-decoration: underline;
       }
