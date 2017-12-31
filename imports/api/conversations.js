@@ -235,7 +235,7 @@ function sendBotMessages(conversationId, messages, userCount, startTime, sentMes
     switch (sentMessages[sentMessages.length - 1].type) {
       case "text":
         const tokenizer = new natural.WordTokenizer();
-        timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / 160) * 60000; // 160 wpm
+        timeWait = (tokenizer.tokenize(sentMessages[sentMessages.length - 1].message.replace(/<.*?>/g, "")).length / wordsPerMinute) * 60000;
         break;
       case "video":
         timeWait = 6000;
@@ -281,7 +281,7 @@ function determineUserMessageMeta(userMessage, rules) {
 
   let rulesScored = rules.map((value) => {
     let score = sentenceSimilarityMultiple(userMessage, value.matching);
-    if (score > 0.2) {
+    if (score > scoreThreshold) {
       return {
         meta: value.meta,
         exclusive: value.exclusive,
