@@ -181,6 +181,10 @@ body {
   overflow: hidden;
   font-size: 14px;
 
+  ul > li {
+    list-style-type: disc;
+  }
+
   video {
     margin: (-1 * $padding-in-message + 4px) (-1 * $padding-in-message) (-2 * $padding-in-message + 7px);
     width: calc(100% + #{$padding-in-message * 2});
