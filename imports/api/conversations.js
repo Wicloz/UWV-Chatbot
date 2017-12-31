@@ -85,6 +85,12 @@ Meteor.methods({
             annoyedFactor: Conversations.findOne({_id: conversationId}).annoyedFactor + 1
           }
         });
+      } else if (Conversations.findOne({_id: conversationId}).annoyedFactor < annoyedFactorTheshold) {
+        Conversations.update(conversationId, {
+          $set: {
+            annoyedFactor: Math.max(Conversations.findOne({_id: conversationId}).annoyedFactor - 1, 0)
+          }
+        });
       }
 
       Conversations.update(conversationId, {

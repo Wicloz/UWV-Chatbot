@@ -52,7 +52,7 @@ Template.body.helpers({
     return conversation();
   },
   userAnnoyed() {
-    return conversation().annoyedFactor >= 3;
+    return conversation().annoyedFactor >= annoyedFactorTheshold;
   },
   chatActive() {
     return Session.get("ChatActive");
@@ -83,7 +83,7 @@ Tracker.autorun(function() {
   }).observeChanges({
     added: function(id, fields) {
       fixMessageScroll();
-      if (!Session.get("AnnoyedRetracted") && conversation().annoyedFactor >= 3) {
+      if (!Session.get("AnnoyedRetracted") && conversation().annoyedFactor >= annoyedFactorTheshold) {
         document.getElementById("message-input").blur();
         Session.set("AnnoyedRetracted", true);
       }
@@ -121,7 +121,7 @@ Template.body.events({
 
     // Reset form
     target.text.value = "";
-    if (conversation().annoyedFactor < 3) {
+    if (conversation().annoyedFactor < annoyedFactorTheshold) {
       target.text.focus();
     } else {
       target.text.blur();
