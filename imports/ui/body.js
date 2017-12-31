@@ -52,7 +52,7 @@ Template.body.helpers({
     return conversation();
   },
   userAnnoyed() {
-    return conversation().annoyedFactor >= annoyedFactorTheshold;
+    return conversation() && conversation().annoyedFactor >= annoyedFactorTheshold;
   },
   chatActive() {
     return Session.get("ChatActive");
