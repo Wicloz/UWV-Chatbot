@@ -342,6 +342,32 @@ function splitAndCorrectSentence(sentence) {
   while (!sentence.equals(oldSentence)) {
     oldSentence = sentence;
 
+    sentence = sentence.map((value, index, array) => {
+      let prevValue = index > 0 ? array[index - 1] : "";
+      let nextValue = index < array.length - 1 ? array[index + 1] : "";
+
+      preprocessSplitWords.forEach((splitWord) => {
+        if (splitWord.replace(" ", "") === value) {
+          value = splitWord;
+        }
+      });
+
+      preprocessPasteWords.forEach((pasteWord) => {
+        if (value === pasteWord.split(" ")[0] && nextValue === pasteWord.split(" ")[1]) {
+          value = pasteWord.replace(" ", "");
+        }
+        if (prevValue === pasteWord.split(" ")[0] && value === pasteWord.split(" ")[1]) {
+          value = false;
+        }
+      });
+
+      return value;
+    });
+
+    sentence = sentence.filter((value) => {
+      return value;
+    });
+
     sentence = sentence.map((value) => {
       if (spellChecker.isMisspelled(value)) {
         let correction = spellChecker.getCorrectionsForMisspelling(value)[0];
@@ -349,6 +375,7 @@ function splitAndCorrectSentence(sentence) {
       }
       return value;
     });
+
     sentence = tokenizer.tokenize(sentence.join(" "));
   }
 
