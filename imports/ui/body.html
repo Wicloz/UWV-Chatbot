@@ -85,7 +85,7 @@
       <ul class="list-unstyled chat-area-messages">
         {{#each message in messages}}
           <li>
-            <p class="chat-message {{#if message.fromUser}}chat-message-user{{else}}chat-message-bot{{/if}}">
+            <p class="chat-message {{#if message.isText}}chat-message-text{{else}}chat-message-media{{/if}} {{#if message.fromUser}}chat-message-user{{else}}chat-message-bot{{/if}}">
               {{#if message.isText}}
                 <span>{{{message.content}}}</span>
               {{else if message.isVideo}}

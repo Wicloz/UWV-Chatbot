@@ -177,7 +177,6 @@ body {
   border-radius: 16px;
   padding: ($padding-in-message - 4px) $padding-in-message ($padding-in-message - 2px);
   border: 1px solid $achtergrondkleuren-uwv-grijs;
-  width: 80%;
   overflow: hidden;
   font-size: 14px;
 
@@ -197,6 +196,14 @@ body {
     border: none;
     overflow: hidden;
   }
+}
+
+.chat-message-text {
+  width: 80%;
+}
+
+.chat-message-media {
+  width: 100%;
 }
 
 .chat-message-bot {
