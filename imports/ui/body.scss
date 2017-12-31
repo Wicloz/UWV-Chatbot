@@ -182,6 +182,7 @@ body {
   border: 1px solid $achtergrondkleuren-uwv-grijs;
   overflow: hidden;
   font-size: 14px;
+  word-wrap: break-word;
 
   ul > li {
     list-style-type: disc;
