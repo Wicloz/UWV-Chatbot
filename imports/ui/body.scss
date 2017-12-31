@@ -252,7 +252,6 @@ body {
     opacity: .2;
   }
 }
-
 .talking span {
   /**
    * Use the blink animation, which is defined above
@@ -275,7 +274,6 @@ body {
    */
   animation-fill-mode: both;
 }
-
 .talking span:nth-child(2) {
   /**
    * Starts the animation of the third dot
@@ -284,7 +282,6 @@ body {
    */
   animation-delay: .4s;
 }
-
 .talking span:nth-child(3) {
   /**
    * Starts the animation of the third dot
@@ -293,3 +290,4 @@ body {
    */
   animation-delay: .8s;
 }
+// Animated talking dots (https://martinwolf.org/blog/2015/01/pure-css-savingloading-dots-animation)
