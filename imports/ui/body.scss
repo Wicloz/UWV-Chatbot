@@ -144,6 +144,9 @@ body {
     .chat-area-form {
       flex: 0 0 auto;
       padding: $spacer/2;
+      textarea {
+        resize: none;
+      }
     }
   }
 

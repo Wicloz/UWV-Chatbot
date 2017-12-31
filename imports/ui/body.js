@@ -1,6 +1,7 @@
 import './body.html';
 import { Messages } from "../api/messages";
 import { Conversations } from "../api/conversations";
+let autosize = require("autosize");
 
 // Functions
 function conversation() {
@@ -30,11 +31,49 @@ function startConversation(characterName) {
   Meteor.call("conversations.sendBotGreeting", Session.get("ConversationId"));
 }
 
+function submitMessageForm() {
+  // Get value from form element
+  const target = document.getElementById("form-send-message");
+  const text = target.text.value;
+
+  // Stop on empty value
+  if (text.trim() === "") {
+    return;
+  }
+
+  // Remove talking flag
+  Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"), false);
+
+  // Send user message
+  Meteor.call("conversations.sendMessage", Session.get("ConversationId"), text, "text", Session.get("IsUser"), []);
+
+  // Handle bot message
+  if (conversation().withBot) {
+    Meteor.call("conversations.botResponse", Session.get("ConversationId"));
+  } else {
+    Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), false, false);
+  }
+
+  // Reset form
+  target.text.value = "";
+  if (conversation().annoyedFactor < annoyedFactorTheshold) {
+    target.text.focus();
+  } else {
+    target.text.blur();
+  }
+  autosize.update(target.text);
+}
+
 // On Created
 Template.body.onCreated(function() {
   Session.set("IsUser", true);
   Session.set("ChatActive", false);
   Session.set("ConversationId", false);
+});
+
+// On Rendered
+Template.body.onRendered(function() {
+  autosize(document.getElementById("message-input"));
 });
 
 // Helpers
@@ -94,38 +133,8 @@ Tracker.autorun(function() {
 // Events
 Template.body.events({
   'submit #form-send-message'(event) {
-    // Prevent default browser form submit
     event.preventDefault();
-
-    // Get value from form element
-    const target = event.target;
-    const text = target.text.value;
-
-    // Stop on empty value
-    if (text === "") {
-      return;
-    }
-
-    // Remove talking flag
-    Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"), false);
-
-    // Send user message
-    Meteor.call("conversations.sendMessage", Session.get("ConversationId"), text, "text", Session.get("IsUser"), []);
-
-    // Handle bot message
-    if (conversation().withBot) {
-      Meteor.call("conversations.botResponse", Session.get("ConversationId"));
-    } else {
-      Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), false, false);
-    }
-
-    // Reset form
-    target.text.value = "";
-    if (conversation().annoyedFactor < annoyedFactorTheshold) {
-      target.text.focus();
-    } else {
-      target.text.blur();
-    }
+    submitMessageForm();
   },
 
   'submit #form-switch-conversation'(event) {
@@ -157,9 +166,14 @@ Template.body.events({
     target.text.value = "";
     document.getElementById("message-input").value = "";
     document.getElementById("message-input").focus();
+    autosize.update(document.getElementById("message-input"));
   },
 
   'keydown #message-input'(event) {
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      submitMessageForm();
+    }
     Meteor.call("conversations.updateTalkingState", Session.get("ConversationId"), Session.get("IsUser"),
       !(event.target.value.length <= 1 && event.keyCode === 8) && event.keyCode !== 13
     );
