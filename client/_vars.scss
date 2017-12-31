@@ -33,5 +33,5 @@ $btn-success-color: $textkleuren-uwv-primair !default;
 $padding-in-message: 12px !default;
 
 // Default Variables
-@import "../node_modules/bootstrap/scss/_variables.scss";
 @import "../node_modules/bootstrap/scss/_custom.scss";
+@import "../node_modules/bootstrap/scss/_variables.scss";
