@@ -157,7 +157,7 @@ Meteor.methods({
     let conversation = Conversations.findOne({_id: conversationId});
 
     // Send message
-    sendBotMessages(conversationId, [conversationGreeting], conversation.handlingUserMessage, startTime);
+    sendBotMessages(conversationId, conversationGreeting.slice(), conversation.handlingUserMessage, startTime);
   },
 
   'conversations.botResponse'(conversationId) {
