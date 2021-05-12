@@ -11,7 +11,7 @@
     "meteor-node-stubs": "^0.3.2",
     "natural": "^0.5.4",
     "sentence-similarity": "^1.0.7",
-    "simpl-schema": "^1.1.0",
+    "simpl-schema": "^1.10.2",
     "spellchecker": "^3.4.4"
   }
 }
