@@ -2,11 +2,13 @@ import SimpleSchema from "simpl-schema";
 import { Messages } from "./messages";
 
 let natural;
-let ss;
+let similarity;
+let similarityScore;
 let spellChecker;
 if (Meteor.isServer) {
   natural = require('natural');
-  ss = require('sentence-similarity');
+  similarity = require('sentence-similarity');
+  similarityScore = require('similarity-score');
   spellChecker = require('spellchecker');
   spellChecker.setDictionary('nl_NL', spellChecker.getDictionaryPath());
   extraDictionaryWords.forEach((value) => {
@@ -323,8 +325,8 @@ function sentenceSimilarityMultiple(userMessagePrepared, matching=[]) {
 
 function sentenceSimilarity(userMessagePrepared, matching) {
   matching = splitAndCorrectSentence(matching);
-  let similarity = ss.sentenceSimilarity(userMessagePrepared, matching, { f: ss.similarityScore.winklerMetaphone, options : {threshold: 0} });
-  let score = similarity.exact * similarity.order * similarity.size * ((-1 / ((userMessagePrepared.length / 1) + 1)) + 1) * ((-1 / ((matching.length / 1) + 1)) + 1);
+  let result = similarity(userMessagePrepared, matching, { f: similarityScore.winklerMetaphone, options : {threshold: 0} });
+  let score = result.exact * result.order * result.size * ((-1 / ((userMessagePrepared.length / 1) + 1)) + 1) * ((-1 / ((matching.length / 1) + 1)) + 1);
 
   if (Meteor.isDevelopment) {
     console.log([userMessagePrepared, matching, score]);
