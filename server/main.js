@@ -1,3 +1,5 @@
+import '../lib/helpers.js';
+import '../lib/conversationDefinition.js';
 import '../imports/api/messages.js';
 import '../imports/api/conversations.js';
 const natural = require('natural');
