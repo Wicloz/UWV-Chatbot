@@ -7,7 +7,7 @@
   "dependencies": {
     "autosize": "^4.0.0",
     "babel-runtime": "^6.26.0",
-    "bootstrap": "^4.0.0-alpha.6",
+    "bootstrap": "^4.6.2",
     "meteor-node-stubs": "^0.3.2",
     "natural": "^0.5.4",
     "sentence-similarity": "^1.0.7",
